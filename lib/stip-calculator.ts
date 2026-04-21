@@ -7,7 +7,7 @@ export interface Team {
   financialTargets: {
     orders: number
     revenue: number
-    margin: number // as decimal, e.g. 0.32 for 32%
+    margin: number // in dollars, not percentage
   }
 }
 
@@ -17,54 +17,61 @@ export interface PerformanceRating {
   multiplier: number
 }
 
-// Performance rating scale
+// Performance rating scale - ordered 1 to 5 for left-to-right display
 export const ratingScale: PerformanceRating[] = [
-  { score: 5, label: "Exceptional", multiplier: 1.2 },
-  { score: 4, label: "Above Expectations", multiplier: 1.1 },
-  { score: 3, label: "Meets Expectations", multiplier: 1.0 },
-  { score: 2, label: "Below Expectations", multiplier: 0.9 },
   { score: 1, label: "Unsatisfactory", multiplier: 0 },
+  { score: 2, label: "Below Expectations", multiplier: 0.9 },
+  { score: 3, label: "Meets Expectations", multiplier: 1.0 },
+  { score: 4, label: "Above Expectations", multiplier: 1.1 },
+  { score: 5, label: "Exceptional", multiplier: 1.2 },
 ]
 
-// Sample teams with different financial targets
+// Sample teams with different financial targets (all in dollars)
 export const teams: Team[] = [
   {
     id: "tms",
     name: "Tactical Missile Systems",
     level: "Business Unit",
-    financialTargets: { orders: 480000000, revenue: 420000000, margin: 0.32 },
+    financialTargets: { orders: 480000000, revenue: 420000000, margin: 134400000 },
   },
   {
     id: "uas",
     name: "Uncrewed Aircraft Systems",
     level: "Business Unit",
-    financialTargets: { orders: 350000000, revenue: 310000000, margin: 0.28 },
+    financialTargets: { orders: 350000000, revenue: 310000000, margin: 86800000 },
   },
   {
     id: "lss",
     name: "Loitering Munitions",
     level: "Product Line",
-    financialTargets: { orders: 180000000, revenue: 145000000, margin: 0.35 },
+    financialTargets: { orders: 180000000, revenue: 145000000, margin: 50750000 },
   },
   {
     id: "power",
     name: "Power Solutions",
     level: "Segment",
-    financialTargets: { orders: 220000000, revenue: 195000000, margin: 0.25 },
+    financialTargets: { orders: 220000000, revenue: 195000000, margin: 48750000 },
   },
   {
     id: "space",
     name: "Space Systems",
     level: "Business Unit",
-    financialTargets: { orders: 95000000, revenue: 82000000, margin: 0.22 },
+    financialTargets: { orders: 95000000, revenue: 82000000, margin: 18040000 },
   },
   {
     id: "corp",
     name: "Corporate Functions",
     level: "Corporate",
-    financialTargets: { orders: 1500000000, revenue: 1350000000, margin: 0.30 },
+    financialTargets: { orders: 1500000000, revenue: 1350000000, margin: 405000000 },
   },
 ]
+
+// Default financial targets (used when no team selected)
+export const defaultTargets = {
+  orders: 100000000,    // $100M
+  revenue: 100000000,   // $100M
+  margin: 50000000,     // $50M
+}
 
 // Payout scale calculation - converts achievement % to payout %
 export function calculatePayoutPercent(achievementPercent: number): number {
@@ -80,6 +87,12 @@ export function calculatePayoutPercent(achievementPercent: number): number {
   }
   // Above 120% = capped at 150%
   return 150
+}
+
+// Calculate achievement percentage from actual vs target
+export function calculateAchievementPercent(actual: number, target: number): number {
+  if (target === 0) return 0
+  return (actual / target) * 100
 }
 
 // Calculate team financial performance from three metrics
@@ -135,7 +148,7 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// Format large currency (millions)
+// Format large currency (millions/billions)
 export function formatLargeCurrency(value: number): string {
   if (value >= 1000000000) {
     return `$${(value / 1000000000).toFixed(2)}B`
@@ -147,4 +160,21 @@ export function formatLargeCurrency(value: number): string {
     return `$${(value / 1000).toFixed(0)}K`
   }
   return formatCurrency(value)
+}
+
+// Parse currency input (handles M, K suffixes)
+export function parseCurrencyInput(value: string): number {
+  const cleaned = value.replace(/[$,\s]/g, '').toUpperCase()
+  
+  if (cleaned.endsWith('B')) {
+    return parseFloat(cleaned.slice(0, -1)) * 1000000000
+  }
+  if (cleaned.endsWith('M')) {
+    return parseFloat(cleaned.slice(0, -1)) * 1000000
+  }
+  if (cleaned.endsWith('K')) {
+    return parseFloat(cleaned.slice(0, -1)) * 1000
+  }
+  
+  return parseFloat(cleaned) || 0
 }
