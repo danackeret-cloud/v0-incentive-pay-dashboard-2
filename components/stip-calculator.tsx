@@ -53,9 +53,6 @@ export function STIPCalculator() {
     [baseSalary, targetPercent, teamFinancials.weightedPayout, personalRating]
   )
 
-  // Average achievement for visual
-  const avgAchievement = (ordersAchievement + revenueAchievement + marginAchievement) / 3
-
   // Slider range: 0% to 150% of target
   const getSliderMax = (target: number) => target * 1.5
 
@@ -395,7 +392,7 @@ export function STIPCalculator() {
 
       {/* Payout Scale Visualization */}
       <PayoutScaleVisual 
-        currentAchievement={avgAchievement} 
+        teamFinancialPayout={teamFinancials.weightedPayout} 
         personalMultiplier={personalRating.multiplier}
       />
 

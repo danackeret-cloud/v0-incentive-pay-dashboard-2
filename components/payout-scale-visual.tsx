@@ -1,16 +1,15 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { calculatePayoutPercent } from "@/lib/stip-calculator"
 
 interface PayoutScaleVisualProps {
-  currentAchievement: number
+  teamFinancialPayout: number // The actual weighted payout percentage (0-150)
   personalMultiplier: number
 }
 
-export function PayoutScaleVisual({ currentAchievement, personalMultiplier }: PayoutScaleVisualProps) {
-  const teamPayout = calculatePayoutPercent(currentAchievement)
-  const finalPayout = (teamPayout / 100) * personalMultiplier * 100
+export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: PayoutScaleVisualProps) {
+  // teamFinancialPayout is already the weighted average payout
+  const teamPayout = teamFinancialPayout
 
   // Chart dimensions and margins
   const width = 400
@@ -37,8 +36,17 @@ export function PayoutScaleVisual({ currentAchievement, personalMultiplier }: Pa
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(p.x)} ${yScale(p.y)}`)
     .join(' ')
 
-  // Current marker position
-  const markerX = xScale(Math.min(Math.max(currentAchievement, 0), 150))
+  // Current marker position - need to reverse the payout to find the achievement
+  // Since the curve is non-linear, we approximate based on payout ranges
+  const getAchievementFromPayout = (payout: number) => {
+    if (payout <= 0) return 0
+    if (payout <= 40) return 80 // At 80% achievement = 40% payout
+    if (payout <= 100) return 80 + ((payout - 40) / (100 - 40)) * (100 - 80) // Linear from 80-100
+    if (payout <= 150) return 100 + ((payout - 100) / (150 - 100)) * (120 - 100) // Linear from 100-120
+    return 120 // Max achievement for display purposes
+  }
+  const estimatedAchievement = getAchievementFromPayout(teamPayout)
+  const markerX = xScale(Math.min(Math.max(estimatedAchievement, 0), 150))
   const markerY = yScale(teamPayout)
 
   return (
@@ -148,7 +156,7 @@ export function PayoutScaleVisual({ currentAchievement, personalMultiplier }: Pa
               className="fill-foreground text-[11px] font-medium"
               transform={`rotate(-90, 15, ${height / 2 - 10})`}
             >
-              Personal Performance Multiplier
+              Team Financial Payout %
             </text>
 
             {/* X-axis tick labels */}
