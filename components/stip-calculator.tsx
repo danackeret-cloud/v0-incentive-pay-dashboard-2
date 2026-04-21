@@ -160,6 +160,12 @@ export function STIPCalculator() {
             <CardDescription>
               Adjust the sliders to simulate different financial outcomes. Each metric is weighted equally (33.3%).
             </CardDescription>
+            <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
+              <p className="text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">Note:</span> The targets shown below are defaults for demonstration purposes. 
+                Your manager will provide your team&apos;s actual financial targets.
+              </p>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Orders */}
