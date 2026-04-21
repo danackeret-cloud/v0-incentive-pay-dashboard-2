@@ -340,7 +340,7 @@ export function STIPCalculator() {
             <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Weighted Team Financials Payout</p>
+                  <p className="font-medium">Team Financials Payout</p>
                   <p className="text-xs text-muted-foreground">
                     ({teamFinancials.ordersPayout.toFixed(0)}% + {teamFinancials.revenuePayout.toFixed(0)}% + {teamFinancials.marginPayout.toFixed(0)}%) / 3
                   </p>
