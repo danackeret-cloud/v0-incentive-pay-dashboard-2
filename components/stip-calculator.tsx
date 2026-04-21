@@ -19,6 +19,7 @@ import {
 } from "@/lib/stip-calculator"
 import { PayoutScaleVisual } from "./payout-scale-visual"
 import { ResultsPanel } from "./results-panel"
+import { StickyResultsBar } from "./sticky-results-bar"
 
 export function STIPCalculator() {
   // Employee inputs
@@ -445,6 +446,18 @@ export function STIPCalculator() {
         finalPayoutPercent={finalResults.finalPayoutPercent}
         finalPayoutAmount={finalResults.finalPayoutAmount}
         ratingLabel={personalRating.label}
+      />
+
+      {/* Bottom padding for sticky bar */}
+      <div className="h-24" />
+
+      {/* Sticky Results Bar */}
+      <StickyResultsBar
+        targetBonus={finalResults.targetBonus}
+        teamFinancialPayout={teamFinancials.weightedPayout}
+        personalMultiplier={personalRating.multiplier}
+        finalPayoutPercent={finalResults.finalPayoutPercent}
+        finalPayoutAmount={finalResults.finalPayoutAmount}
       />
     </div>
   )
