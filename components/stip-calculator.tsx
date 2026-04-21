@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   ratingScale,
   defaultTargets,
@@ -23,6 +24,7 @@ export function STIPCalculator() {
   // Employee inputs
   const [baseSalary, setBaseSalary] = useState(125000)
   const [targetPercent, setTargetPercent] = useState(15)
+  const [orgType, setOrgType] = useState<"pl" | "function">("pl") // pl = Segment/Product Line, function = Corporate Function
 
   // Financial targets (editable, defaults to $100M, $100M, $50M)
   const [ordersTarget, setOrdersTarget] = useState(defaultTargets.orders)
@@ -65,7 +67,7 @@ export function STIPCalculator() {
           <CardDescription>Enter your compensation details</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="salary">Base Salary</Label>
               <div className="relative">
@@ -94,6 +96,30 @@ export function STIPCalculator() {
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
               </div>
             </div>
+            <div className="space-y-2">
+              <Label>Organization Type</Label>
+              <RadioGroup
+                value={orgType}
+                onValueChange={(value) => setOrgType(value as "pl" | "function")}
+                className="flex flex-col gap-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="pl" id="pl" />
+                  <Label htmlFor="pl" className="font-normal cursor-pointer">Segment / Product Line</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="function" id="function" />
+                  <Label htmlFor="function" className="font-normal cursor-pointer">Corporate Function</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+          <div className="mt-3 rounded-lg bg-secondary/50 border border-secondary p-3">
+            <p className="text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">Note:</span> Organization type only affects the third financial metric. 
+              Segment/Product Lines are measured on <span className="font-medium">Adj. Gross Margin</span>, while 
+              Corporate Functions are measured on <span className="font-medium">Adj. EBITDA</span>.
+            </p>
           </div>
           <div className="mt-4 rounded-lg bg-muted/50 p-3">
             <p className="text-sm text-muted-foreground">
@@ -139,14 +165,25 @@ export function STIPCalculator() {
                   </div>
                 </div>
               </div>
-              <Slider
-                value={[ordersActual]}
-                onValueChange={([v]) => setOrdersActual(v)}
-                min={0}
-                max={getSliderMax(ordersTarget)}
-                step={ordersTarget / 100}
-                className="w-full"
-              />
+              <div className="relative pt-2">
+                {/* Tick marks */}
+                <div className="absolute inset-x-0 top-0 flex justify-between pointer-events-none" style={{ height: '8px' }}>
+                  <div className="w-px h-2 bg-muted-foreground/30" />
+                  <div className="w-px h-3 bg-destructive" style={{ position: 'absolute', left: '40%' }} />
+                  <div className="w-px h-3 bg-muted-foreground" style={{ position: 'absolute', left: '50%' }} />
+                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '60%' }} />
+                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', left: '75%' }} />
+                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', right: '0' }} />
+                </div>
+                <Slider
+                  value={[ordersActual]}
+                  onValueChange={([v]) => setOrdersActual(v)}
+                  min={0}
+                  max={getSliderMax(ordersTarget)}
+                  step={ordersTarget / 100}
+                  className="w-full"
+                />
+              </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-lg">{formatLargeCurrency(ordersActual)}</span>
                 <span className="text-muted-foreground">
@@ -187,14 +224,25 @@ export function STIPCalculator() {
                   </div>
                 </div>
               </div>
-              <Slider
-                value={[revenueActual]}
-                onValueChange={([v]) => setRevenueActual(v)}
-                min={0}
-                max={getSliderMax(revenueTarget)}
-                step={revenueTarget / 100}
-                className="w-full"
-              />
+              <div className="relative pt-2">
+                {/* Tick marks */}
+                <div className="absolute inset-x-0 top-0 flex justify-between pointer-events-none" style={{ height: '8px' }}>
+                  <div className="w-px h-2 bg-muted-foreground/30" />
+                  <div className="w-px h-3 bg-destructive" style={{ position: 'absolute', left: '40%' }} />
+                  <div className="w-px h-3 bg-muted-foreground" style={{ position: 'absolute', left: '50%' }} />
+                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '60%' }} />
+                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', left: '75%' }} />
+                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', right: '0' }} />
+                </div>
+                <Slider
+                  value={[revenueActual]}
+                  onValueChange={([v]) => setRevenueActual(v)}
+                  min={0}
+                  max={getSliderMax(revenueTarget)}
+                  step={revenueTarget / 100}
+                  className="w-full"
+                />
+              </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-lg">{formatLargeCurrency(revenueActual)}</span>
                 <span className="text-muted-foreground">
@@ -212,10 +260,12 @@ export function STIPCalculator() {
               </div>
             </div>
 
-            {/* Margin (in dollars) */}
+            {/* Margin/EBITDA (in dollars) */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-semibold">Adj. Gross Margin</Label>
+                <Label className="text-base font-semibold">
+                  {orgType === "pl" ? "Adj. Gross Margin" : "Adj. EBITDA"}
+                </Label>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Target:</span>
                   <div className="relative w-28">
@@ -235,14 +285,25 @@ export function STIPCalculator() {
                   </div>
                 </div>
               </div>
-              <Slider
-                value={[marginActual]}
-                onValueChange={([v]) => setMarginActual(v)}
-                min={0}
-                max={getSliderMax(marginTarget)}
-                step={marginTarget / 100}
-                className="w-full"
-              />
+              <div className="relative pt-2">
+                {/* Tick marks */}
+                <div className="absolute inset-x-0 top-0 flex justify-between pointer-events-none" style={{ height: '8px' }}>
+                  <div className="w-px h-2 bg-muted-foreground/30" />
+                  <div className="w-px h-3 bg-destructive" style={{ position: 'absolute', left: '40%' }} />
+                  <div className="w-px h-3 bg-muted-foreground" style={{ position: 'absolute', left: '50%' }} />
+                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '60%' }} />
+                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', left: '75%' }} />
+                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', right: '0' }} />
+                </div>
+                <Slider
+                  value={[marginActual]}
+                  onValueChange={([v]) => setMarginActual(v)}
+                  min={0}
+                  max={getSliderMax(marginTarget)}
+                  step={marginTarget / 100}
+                  className="w-full"
+                />
+              </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-lg">{formatLargeCurrency(marginActual)}</span>
                 <span className="text-muted-foreground">
