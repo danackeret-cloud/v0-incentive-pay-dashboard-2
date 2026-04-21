@@ -62,9 +62,9 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Payout Matrix</CardTitle>
+        <CardTitle>How STIP Works</CardTitle>
         <CardDescription>
-          Team financial payout (x-axis) combined with personal rating (y-axis) determines your final bonus
+          Team Financial Performance % (x-axis) combined with personal rating (y-axis) determines your final bonus
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -153,7 +153,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
               textAnchor="middle"
               className="fill-foreground text-[11px] font-medium"
             >
-              Team Financial Payout %
+              Team Financial Performance %
             </text>
 
             {/* Y-axis label */}
