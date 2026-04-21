@@ -1,56 +1,50 @@
-import { DashboardHeader } from "@/components/dashboard-header"
-import { STIPSummary } from "@/components/stip-summary"
-import { PayoutScale } from "@/components/payout-scale"
-import { TeamFinancials } from "@/components/team-financials"
-import { PersonalPerformance } from "@/components/personal-performance"
-import { FormulaBreakdown } from "@/components/formula-breakdown"
-import { demoSTIPData, calculateTeamFinancialPerformance } from "@/lib/bonus-data"
+import { STIPCalculator } from "@/components/stip-calculator"
 
-export default function STIPDashboard() {
-  const teamPerformance = calculateTeamFinancialPerformance(demoSTIPData.teamFinancials)
-  
+export default function STIPCalculatorPage() {
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
+      <main className="container mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
-        <DashboardHeader employee={demoSTIPData.employee} />
+        <header className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            STIP Calculator
+          </h1>
+          <p className="mt-2 text-balance text-muted-foreground">
+            Explore how your short-term incentive payout is calculated. Adjust the sliders to see how 
+            team performance and your personal rating affect your bonus.
+          </p>
+        </header>
 
-        {/* Summary Cards */}
-        <section className="mt-8">
-          <STIPSummary data={demoSTIPData} />
-        </section>
+        {/* How It Works */}
+        <div className="mb-8 rounded-lg border bg-card p-4">
+          <h2 className="font-semibold text-foreground">How STIP Works</h2>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-sm">
+            <span className="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">
+              Team Financial %
+            </span>
+            <span className="text-muted-foreground">x</span>
+            <span className="rounded-full bg-accent/10 px-3 py-1 font-medium text-accent">
+              Personal Rating %
+            </span>
+            <span className="text-muted-foreground">=</span>
+            <span className="rounded-full bg-foreground px-3 py-1 font-medium text-background">
+              Final STIP Payout %
+            </span>
+          </div>
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Team financials are based on Orders, Revenue, and Margin (equally weighted). 
+            Personal rating is a 1-5 scale assigned by your manager.
+          </p>
+        </div>
 
-        {/* Formula Breakdown */}
-        <section className="mt-8">
-          <FormulaBreakdown data={demoSTIPData} />
-        </section>
-
-        {/* Payout Scale */}
-        <section className="mt-8">
-          <PayoutScale currentAchievement={teamPerformance.weightedAchievement} />
-        </section>
-
-        {/* Two Column Layout for Details */}
-        <section className="mt-8 grid gap-8 lg:grid-cols-2">
-          {/* Team Financials */}
-          <TeamFinancials 
-            metrics={demoSTIPData.teamFinancials} 
-            teamLevel={demoSTIPData.employee.teamLevel}
-          />
-          
-          {/* Personal Performance */}
-          <PersonalPerformance 
-            avPriorities={demoSTIPData.avPriorities}
-            individualGoals={demoSTIPData.individualGoals}
-            rating={demoSTIPData.personalRating}
-          />
-        </section>
+        {/* Calculator */}
+        <STIPCalculator />
 
         {/* Footer */}
         <footer className="mt-12 border-t pt-6 text-center text-sm text-muted-foreground">
-          <p>
-            This dashboard shows estimated bonus calculations based on current performance data.
-            Final bonus amounts are subject to management approval and may vary.
+          <p className="text-balance">
+            This calculator provides estimates for educational purposes only.
+            Final bonus amounts are subject to management approval and actual financial results.
           </p>
           <p className="mt-2">
             Questions about your incentive plan? Contact HR or your manager.
