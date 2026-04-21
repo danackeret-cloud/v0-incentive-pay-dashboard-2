@@ -173,7 +173,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
             <text x={margin.left - 8} y={yScale(150) + 4} textAnchor="end" className="fill-accent text-[10px] font-semibold">150%</text>
 
             {/* Current position marker */}
-            {currentAchievement >= 0 && (
+            {teamFinancialPayout >= 0 && (
               <>
                 {/* Marker circle */}
                 <circle
