@@ -168,17 +168,21 @@ export function STIPCalculator() {
                 <Label className="text-base font-semibold">Orders</Label>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Target:</span>
-                  <div className="relative w-28">
+                  <div className="relative w-32">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
-                      type="number"
-                      value={ordersTarget / 1000000}
+                      type="text"
+                      value={(ordersTarget / 1000000).toLocaleString()}
                       onChange={(e) => {
-                        const newTarget = Number(e.target.value) * 1000000
-                        setOrdersTarget(newTarget)
-                        // Keep actual at same achievement %
-                        const currentAchievement = ordersActual / ordersTarget
-                        setOrdersActual(newTarget * currentAchievement)
+                        const value = e.target.value.replace(/,/g, '')
+                        const num = Number(value)
+                        if (!isNaN(num)) {
+                          const newTarget = num * 1000000
+                          setOrdersTarget(newTarget)
+                          // Keep actual at same achievement %
+                          const currentAchievement = ordersActual / ordersTarget
+                          setOrdersActual(newTarget * currentAchievement)
+                        }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
                     />
@@ -222,16 +226,20 @@ export function STIPCalculator() {
                 <Label className="text-base font-semibold">Revenue</Label>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Target:</span>
-                  <div className="relative w-28">
+                  <div className="relative w-32">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
-                      type="number"
-                      value={revenueTarget / 1000000}
+                      type="text"
+                      value={(revenueTarget / 1000000).toLocaleString()}
                       onChange={(e) => {
-                        const newTarget = Number(e.target.value) * 1000000
-                        setRevenueTarget(newTarget)
-                        const currentAchievement = revenueActual / revenueTarget
-                        setRevenueActual(newTarget * currentAchievement)
+                        const value = e.target.value.replace(/,/g, '')
+                        const num = Number(value)
+                        if (!isNaN(num)) {
+                          const newTarget = num * 1000000
+                          setRevenueTarget(newTarget)
+                          const currentAchievement = revenueActual / revenueTarget
+                          setRevenueActual(newTarget * currentAchievement)
+                        }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
                     />
@@ -277,16 +285,20 @@ export function STIPCalculator() {
                 </Label>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Target:</span>
-                  <div className="relative w-28">
+                  <div className="relative w-32">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
-                      type="number"
-                      value={marginTarget / 1000000}
+                      type="text"
+                      value={(marginTarget / 1000000).toLocaleString()}
                       onChange={(e) => {
-                        const newTarget = Number(e.target.value) * 1000000
-                        setMarginTarget(newTarget)
-                        const currentAchievement = marginActual / marginTarget
-                        setMarginActual(newTarget * currentAchievement)
+                        const value = e.target.value.replace(/,/g, '')
+                        const num = Number(value)
+                        if (!isNaN(num)) {
+                          const newTarget = num * 1000000
+                          setMarginTarget(newTarget)
+                          const currentAchievement = marginActual / marginTarget
+                          setMarginActual(newTarget * currentAchievement)
+                        }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
                     />
