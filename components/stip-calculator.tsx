@@ -58,6 +58,21 @@ export function STIPCalculator() {
   // Slider range: 0% to 200% of target
   const getSliderMax = (target: number) => target * 2
 
+  // Snap thresholds (as percentages of target)
+  const snapPoints = [80, 100, 120]
+  const snapTolerance = 3 // Will snap if within 3% of a threshold
+
+  // Snap value to nearest threshold if close enough
+  const snapToThreshold = (value: number, target: number): number => {
+    const percentOfTarget = (value / target) * 100
+    for (const snapPoint of snapPoints) {
+      if (Math.abs(percentOfTarget - snapPoint) <= snapTolerance) {
+        return target * (snapPoint / 100)
+      }
+    }
+    return value
+  }
+
   return (
     <div className="space-y-6">
       {/* Your Information */}
@@ -177,7 +192,7 @@ export function STIPCalculator() {
                 </div>
                 <Slider
                   value={[ordersActual]}
-                  onValueChange={([v]) => setOrdersActual(v)}
+                  onValueChange={([v]) => setOrdersActual(snapToThreshold(v, ordersTarget))}
                   min={0}
                   max={getSliderMax(ordersTarget)}
                   step={ordersTarget / 100}
@@ -236,7 +251,7 @@ export function STIPCalculator() {
                 </div>
                 <Slider
                   value={[revenueActual]}
-                  onValueChange={([v]) => setRevenueActual(v)}
+                  onValueChange={([v]) => setRevenueActual(snapToThreshold(v, revenueTarget))}
                   min={0}
                   max={getSliderMax(revenueTarget)}
                   step={revenueTarget / 100}
@@ -297,7 +312,7 @@ export function STIPCalculator() {
                 </div>
                 <Slider
                   value={[marginActual]}
-                  onValueChange={([v]) => setMarginActual(v)}
+                  onValueChange={([v]) => setMarginActual(snapToThreshold(v, marginTarget))}
                   min={0}
                   max={getSliderMax(marginTarget)}
                   step={marginTarget / 100}
