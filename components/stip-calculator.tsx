@@ -409,7 +409,7 @@ export function STIPCalculator() {
       {/* Payout Scale Visualization */}
       <PayoutScaleVisual 
         teamFinancialPayout={teamFinancials.weightedPayout} 
-        personalMultiplier={personalRating.multiplier}
+        personalRating={personalRating.score}
       />
 
       {/* Results */}
