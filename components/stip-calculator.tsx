@@ -108,12 +108,25 @@ export function STIPCalculator() {
               <div className="relative">
                 <Input
                   id="target"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={targetPercent}
-                  onChange={(e) => setTargetPercent(Number(e.target.value))}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    // Allow empty string while typing
+                    if (value === '') return
+                    const num = Number(value)
+                    if (!isNaN(num) && num >= 0 && num <= 100) {
+                      setTargetPercent(num)
+                    }
+                  }}
+                  onBlur={(e) => {
+                    // Reset to last valid value if empty on blur
+                    if (e.target.value === '' || isNaN(Number(e.target.value))) {
+                      setTargetPercent(15)
+                    }
+                  }}
                   className="pr-7"
-                  min={0}
-                  max={100}
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
               </div>
