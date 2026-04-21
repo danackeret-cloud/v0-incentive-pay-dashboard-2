@@ -5,81 +5,101 @@ import { calculatePayoutPercent } from "@/lib/stip-calculator"
 
 interface PayoutScaleVisualProps {
   currentAchievement: number
+  personalMultiplier: number
 }
 
-export function PayoutScaleVisual({ currentAchievement }: PayoutScaleVisualProps) {
-  const currentPayout = calculatePayoutPercent(currentAchievement)
+export function PayoutScaleVisual({ currentAchievement, personalMultiplier }: PayoutScaleVisualProps) {
+  const teamPayout = calculatePayoutPercent(currentAchievement)
+  const finalPayout = (teamPayout / 100) * personalMultiplier * 100
 
-  // Generate data points for the chart
-  const dataPoints = []
-  for (let i = 0; i <= 150; i += 5) {
-    dataPoints.push({
-      achievement: i,
-      payout: calculatePayoutPercent(i),
-    })
-  }
+  // Chart dimensions and margins
+  const width = 400
+  const height = 220
+  const margin = { top: 20, right: 20, bottom: 50, left: 60 }
+  const chartWidth = width - margin.left - margin.right
+  const chartHeight = height - margin.top - margin.bottom
 
-  // Calculate position of current marker (0-150 range mapped to 0-100%)
-  const markerPosition = Math.min(Math.max((currentAchievement / 150) * 100, 0), 100)
+  // Scale functions
+  const xScale = (achievement: number) => (achievement / 150) * chartWidth + margin.left
+  const yScale = (payout: number) => chartHeight - (payout / 180) * chartHeight + margin.top
+
+  // Key points for the payout curve
+  const curvePoints = [
+    { x: 0, y: 0 },
+    { x: 80, y: 0 },
+    { x: 80, y: 40 },
+    { x: 100, y: 100 },
+    { x: 120, y: 150 },
+    { x: 150, y: 150 },
+  ]
+
+  const pathD = curvePoints
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(p.x)} ${yScale(p.y)}`)
+    .join(' ')
+
+  // Current marker position
+  const markerX = xScale(Math.min(Math.max(currentAchievement, 0), 150))
+  const markerY = yScale(teamPayout)
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Payout Scale Reference</CardTitle>
         <CardDescription>
-          See how achievement percentage translates to payout percentage
+          See how team financial achievement translates to payout percentage
         </CardDescription>
       </CardHeader>
       <CardContent>
         {/* SVG Chart */}
-        <div className="relative h-64 w-full">
-          <svg viewBox="0 0 400 200" className="h-full w-full" preserveAspectRatio="xMidYMid meet">
-            {/* Grid lines */}
-            <defs>
-              <pattern id="grid" width="26.67" height="33.33" patternUnits="userSpaceOnUse">
-                <path d="M 26.67 0 L 0 0 0 33.33" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-border" />
-              </pattern>
-            </defs>
-            <rect width="400" height="200" fill="url(#grid)" opacity="0.5" />
+        <div className="relative w-full overflow-x-auto">
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full min-w-[400px]" preserveAspectRatio="xMidYMid meet">
+            {/* Grid lines - horizontal */}
+            {[0, 40, 100, 150].map((payout) => (
+              <line
+                key={`h-${payout}`}
+                x1={margin.left}
+                y1={yScale(payout)}
+                x2={width - margin.right}
+                y2={yScale(payout)}
+                stroke="currentColor"
+                strokeWidth="1"
+                strokeDasharray={payout === 100 ? "none" : "4,4"}
+                className={payout === 100 ? "text-muted-foreground/30" : "text-border"}
+              />
+            ))}
 
-            {/* Axis labels - Achievement */}
-            <text x="200" y="195" textAnchor="middle" className="fill-muted-foreground text-[10px]">Achievement %</text>
-            
-            {/* Axis labels - Payout */}
-            <text x="10" y="100" textAnchor="middle" className="fill-muted-foreground text-[10px]" transform="rotate(-90, 10, 100)">Payout %</text>
+            {/* Grid lines - vertical */}
+            {[80, 100, 120].map((achievement) => (
+              <line
+                key={`v-${achievement}`}
+                x1={xScale(achievement)}
+                y1={margin.top}
+                x2={xScale(achievement)}
+                y2={height - margin.bottom}
+                stroke="currentColor"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+                className={
+                  achievement === 80 ? "text-destructive/50" : 
+                  achievement === 120 ? "text-accent/50" : 
+                  "text-muted-foreground/30"
+                }
+              />
+            ))}
 
-            {/* X-axis tick labels */}
-            <text x="0" y="185" textAnchor="start" className="fill-muted-foreground text-[9px]">0%</text>
-            <text x="106.67" y="185" textAnchor="middle" className="fill-destructive text-[9px] font-medium">80%</text>
-            <text x="266.67" y="185" textAnchor="middle" className="fill-muted-foreground text-[9px]">100%</text>
-            <text x="320" y="185" textAnchor="middle" className="fill-accent text-[9px] font-medium">120%</text>
-            <text x="400" y="185" textAnchor="end" className="fill-muted-foreground text-[9px]">150%</text>
-
-            {/* Y-axis tick labels */}
-            <text x="25" y="170" textAnchor="end" className="fill-muted-foreground text-[9px]">0%</text>
-            <text x="25" y="143.33" textAnchor="end" className="fill-destructive text-[9px] font-medium">40%</text>
-            <text x="25" y="103.33" textAnchor="end" className="fill-muted-foreground text-[9px]">100%</text>
-            <text x="25" y="70" textAnchor="end" className="fill-accent text-[9px] font-medium">150%</text>
-
-            {/* 80% achievement vertical line (cliff) */}
-            <line x1="106.67" y1="0" x2="106.67" y2="170" stroke="currentColor" strokeWidth="1" strokeDasharray="4,4" className="text-destructive" />
-            
-            {/* 100% achievement vertical line */}
-            <line x1="266.67" y1="0" x2="266.67" y2="170" stroke="currentColor" strokeWidth="1" strokeDasharray="4,4" className="text-muted-foreground" />
-            
-            {/* 120% achievement vertical line (max) */}
-            <line x1="320" y1="0" x2="320" y2="170" stroke="currentColor" strokeWidth="1" strokeDasharray="4,4" className="text-accent" />
+            {/* Zero payout zone fill */}
+            <rect
+              x={margin.left}
+              y={margin.top}
+              width={xScale(80) - margin.left}
+              height={chartHeight}
+              fill="currentColor"
+              className="text-destructive/10"
+            />
 
             {/* Payout curve */}
             <path
-              d={`
-                M 0 170
-                L 106.67 170
-                L 106.67 143.33
-                L 266.67 103.33
-                L 320 70
-                L 400 70
-              `}
+              d={pathD}
               fill="none"
               stroke="currentColor"
               strokeWidth="3"
@@ -88,46 +108,97 @@ export function PayoutScaleVisual({ currentAchievement }: PayoutScaleVisualProps
               strokeLinejoin="round"
             />
 
-            {/* Zero payout zone fill */}
-            <path
-              d="M 0 170 L 106.67 170 L 106.67 170 L 0 170 Z"
-              fill="currentColor"
-              className="text-destructive/10"
+            {/* X-axis */}
+            <line
+              x1={margin.left}
+              y1={height - margin.bottom}
+              x2={width - margin.right}
+              y2={height - margin.bottom}
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-foreground"
             />
+
+            {/* Y-axis */}
+            <line
+              x1={margin.left}
+              y1={margin.top}
+              x2={margin.left}
+              y2={height - margin.bottom}
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-foreground"
+            />
+
+            {/* X-axis label */}
+            <text
+              x={width / 2}
+              y={height - 8}
+              textAnchor="middle"
+              className="fill-foreground text-[11px] font-medium"
+            >
+              Team Financial Performance
+            </text>
+
+            {/* Y-axis label */}
+            <text
+              x={15}
+              y={height / 2 - 10}
+              textAnchor="middle"
+              className="fill-foreground text-[11px] font-medium"
+              transform={`rotate(-90, 15, ${height / 2 - 10})`}
+            >
+              Personal Performance Multiplier
+            </text>
+
+            {/* X-axis tick labels */}
+            <text x={xScale(0)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-muted-foreground text-[10px]">0%</text>
+            <text x={xScale(80)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-destructive text-[10px] font-semibold">80%</text>
+            <text x={xScale(100)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-muted-foreground text-[10px]">100%</text>
+            <text x={xScale(120)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-accent text-[10px] font-semibold">120%</text>
+            <text x={xScale(150)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-muted-foreground text-[10px]">150%</text>
+
+            {/* Y-axis tick labels */}
+            <text x={margin.left - 8} y={yScale(0) + 4} textAnchor="end" className="fill-muted-foreground text-[10px]">0%</text>
+            <text x={margin.left - 8} y={yScale(40) + 4} textAnchor="end" className="fill-destructive text-[10px] font-semibold">40%</text>
+            <text x={margin.left - 8} y={yScale(100) + 4} textAnchor="end" className="fill-muted-foreground text-[10px]">100%</text>
+            <text x={margin.left - 8} y={yScale(150) + 4} textAnchor="end" className="fill-accent text-[10px] font-semibold">150%</text>
 
             {/* Current position marker */}
             {currentAchievement >= 0 && (
               <>
+                {/* Marker circle */}
                 <circle
-                  cx={(currentAchievement / 150) * 400}
-                  cy={170 - (currentPayout / 150) * 100}
-                  r="8"
+                  cx={markerX}
+                  cy={markerY}
+                  r="10"
                   fill="currentColor"
                   className="text-primary"
                 />
                 <circle
-                  cx={(currentAchievement / 150) * 400}
-                  cy={170 - (currentPayout / 150) * 100}
-                  r="5"
+                  cx={markerX}
+                  cy={markerY}
+                  r="6"
                   fill="white"
                 />
-                {/* Label for current position */}
+                
+                {/* Label box */}
                 <rect
-                  x={(currentAchievement / 150) * 400 - 30}
-                  y={170 - (currentPayout / 150) * 100 - 28}
-                  width="60"
+                  x={markerX - 35}
+                  y={markerY - 32}
+                  width="70"
                   height="20"
                   rx="4"
                   fill="currentColor"
                   className="text-primary"
                 />
                 <text
-                  x={(currentAchievement / 150) * 400}
-                  y={170 - (currentPayout / 150) * 100 - 14}
+                  x={markerX}
+                  y={markerY - 18}
                   textAnchor="middle"
                   className="fill-primary-foreground text-[10px] font-bold"
                 >
-                  {currentPayout.toFixed(0)}% payout
+                  {teamPayout.toFixed(0)}% payout
                 </text>
               </>
             )}
@@ -141,7 +212,7 @@ export function PayoutScaleVisual({ currentAchievement }: PayoutScaleVisualProps
             <span className="text-muted-foreground">Below 80% = 0%</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-orange-500" />
+            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: "#f97316" }} />
             <span className="text-muted-foreground">80% = 40% payout</span>
           </div>
           <div className="flex items-center gap-2">

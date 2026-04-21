@@ -4,10 +4,8 @@ import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import {
-  teams,
   ratingScale,
   defaultTargets,
   calculatePayoutPercent,
@@ -16,7 +14,6 @@ import {
   calculateFinalPayout,
   formatCurrency,
   formatLargeCurrency,
-  type Team,
   type PerformanceRating,
 } from "@/lib/stip-calculator"
 import { PayoutScaleVisual } from "./payout-scale-visual"
@@ -26,35 +23,19 @@ export function STIPCalculator() {
   // Employee inputs
   const [baseSalary, setBaseSalary] = useState(125000)
   const [targetPercent, setTargetPercent] = useState(15)
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
 
-  // Financial targets (editable, defaults shown)
+  // Financial targets (editable, defaults to $100M, $100M, $50M)
   const [ordersTarget, setOrdersTarget] = useState(defaultTargets.orders)
   const [revenueTarget, setRevenueTarget] = useState(defaultTargets.revenue)
   const [marginTarget, setMarginTarget] = useState(defaultTargets.margin)
 
-  // Actual amounts (what the sliders control)
+  // Actual amounts (what the sliders control) - default to 100% of target
   const [ordersActual, setOrdersActual] = useState(defaultTargets.orders)
   const [revenueActual, setRevenueActual] = useState(defaultTargets.revenue)
   const [marginActual, setMarginActual] = useState(defaultTargets.margin)
 
-  // Personal rating - default to Meets Expectations (score 3)
+  // Personal rating - default to Average (score 3)
   const [personalRating, setPersonalRating] = useState<PerformanceRating>(ratingScale[2])
-
-  // Handle team selection - updates targets
-  const handleTeamChange = (teamId: string) => {
-    const team = teams.find((t) => t.id === teamId) || null
-    setSelectedTeam(team)
-    if (team) {
-      setOrdersTarget(team.financialTargets.orders)
-      setRevenueTarget(team.financialTargets.revenue)
-      setMarginTarget(team.financialTargets.margin)
-      // Reset actuals to targets
-      setOrdersActual(team.financialTargets.orders)
-      setRevenueActual(team.financialTargets.revenue)
-      setMarginActual(team.financialTargets.margin)
-    }
-  }
 
   // Calculate achievement percentages
   const ordersAchievement = calculateAchievementPercent(ordersActual, ordersTarget)
@@ -77,7 +58,6 @@ export function STIPCalculator() {
 
   // Slider range: 0% to 150% of target
   const getSliderMax = (target: number) => target * 1.5
-  const getSliderMin = () => 0
 
   return (
     <div className="space-y-6">
@@ -85,10 +65,10 @@ export function STIPCalculator() {
       <Card>
         <CardHeader>
           <CardTitle>Your Information</CardTitle>
-          <CardDescription>Enter your compensation details and select your team</CardDescription>
+          <CardDescription>Enter your compensation details</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="salary">Base Salary</Label>
               <div className="relative">
@@ -116,27 +96,6 @@ export function STIPCalculator() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="team">Team</Label>
-              <Select
-                value={selectedTeam?.id || ""}
-                onValueChange={handleTeamChange}
-              >
-                <SelectTrigger id="team">
-                  <SelectValue placeholder="Select a team (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedTeam && (
-                <p className="text-xs text-muted-foreground">Level: {selectedTeam.level}</p>
-              )}
             </div>
           </div>
           <div className="mt-4 rounded-lg bg-muted/50 p-3">
@@ -173,6 +132,9 @@ export function STIPCalculator() {
                       onChange={(e) => {
                         const newTarget = Number(e.target.value) * 1000000
                         setOrdersTarget(newTarget)
+                        // Keep actual at same achievement %
+                        const currentAchievement = ordersActual / ordersTarget
+                        setOrdersActual(newTarget * currentAchievement)
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
                     />
@@ -180,25 +142,32 @@ export function STIPCalculator() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{formatLargeCurrency(ordersActual)}</span>
-                <span className="text-muted-foreground">
-                  {ordersAchievement.toFixed(0)}% achievement = <span className="font-semibold text-foreground">{teamFinancials.ordersPayout.toFixed(0)}% payout</span>
-                </span>
-              </div>
               <Slider
                 value={[ordersActual]}
                 onValueChange={([v]) => setOrdersActual(v)}
-                min={getSliderMin()}
+                min={0}
                 max={getSliderMax(ordersTarget)}
                 step={ordersTarget / 100}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-lg">{formatLargeCurrency(ordersActual)}</span>
+                <span className="text-muted-foreground">
+                  {ordersAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.ordersPayout.toFixed(0)}% payout</span>
+                </span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground px-1">
                 <span>$0</span>
-                <span className="text-destructive">80%</span>
+                <span>{formatLargeCurrency(ordersTarget * 0.8)}</span>
+                <span>{formatLargeCurrency(ordersTarget)}</span>
+                <span>{formatLargeCurrency(ordersTarget * 1.2)}</span>
+                <span>{formatLargeCurrency(ordersTarget * 1.5)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground px-1">
+                <span>0%</span>
+                <span className="text-destructive font-medium">80%</span>
                 <span>100%</span>
-                <span className="text-accent">120%</span>
+                <span className="text-accent font-medium">120%</span>
                 <span>150%</span>
               </div>
             </div>
@@ -217,6 +186,8 @@ export function STIPCalculator() {
                       onChange={(e) => {
                         const newTarget = Number(e.target.value) * 1000000
                         setRevenueTarget(newTarget)
+                        const currentAchievement = revenueActual / revenueTarget
+                        setRevenueActual(newTarget * currentAchievement)
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
                     />
@@ -224,30 +195,37 @@ export function STIPCalculator() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{formatLargeCurrency(revenueActual)}</span>
-                <span className="text-muted-foreground">
-                  {revenueAchievement.toFixed(0)}% achievement = <span className="font-semibold text-foreground">{teamFinancials.revenuePayout.toFixed(0)}% payout</span>
-                </span>
-              </div>
               <Slider
                 value={[revenueActual]}
                 onValueChange={([v]) => setRevenueActual(v)}
-                min={getSliderMin()}
+                min={0}
                 max={getSliderMax(revenueTarget)}
                 step={revenueTarget / 100}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-lg">{formatLargeCurrency(revenueActual)}</span>
+                <span className="text-muted-foreground">
+                  {revenueAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.revenuePayout.toFixed(0)}% payout</span>
+                </span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground px-1">
                 <span>$0</span>
-                <span className="text-destructive">80%</span>
+                <span>{formatLargeCurrency(revenueTarget * 0.8)}</span>
+                <span>{formatLargeCurrency(revenueTarget)}</span>
+                <span>{formatLargeCurrency(revenueTarget * 1.2)}</span>
+                <span>{formatLargeCurrency(revenueTarget * 1.5)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground px-1">
+                <span>0%</span>
+                <span className="text-destructive font-medium">80%</span>
                 <span>100%</span>
-                <span className="text-accent">120%</span>
+                <span className="text-accent font-medium">120%</span>
                 <span>150%</span>
               </div>
             </div>
 
-            {/* Margin (now in dollars) */}
+            {/* Margin (in dollars) */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-base font-semibold">Adj. Gross Margin</Label>
@@ -261,6 +239,8 @@ export function STIPCalculator() {
                       onChange={(e) => {
                         const newTarget = Number(e.target.value) * 1000000
                         setMarginTarget(newTarget)
+                        const currentAchievement = marginActual / marginTarget
+                        setMarginActual(newTarget * currentAchievement)
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
                     />
@@ -268,25 +248,32 @@ export function STIPCalculator() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{formatLargeCurrency(marginActual)}</span>
-                <span className="text-muted-foreground">
-                  {marginAchievement.toFixed(0)}% achievement = <span className="font-semibold text-foreground">{teamFinancials.marginPayout.toFixed(0)}% payout</span>
-                </span>
-              </div>
               <Slider
                 value={[marginActual]}
                 onValueChange={([v]) => setMarginActual(v)}
-                min={getSliderMin()}
+                min={0}
                 max={getSliderMax(marginTarget)}
                 step={marginTarget / 100}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-lg">{formatLargeCurrency(marginActual)}</span>
+                <span className="text-muted-foreground">
+                  {marginAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.marginPayout.toFixed(0)}% payout</span>
+                </span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground px-1">
                 <span>$0</span>
-                <span className="text-destructive">80%</span>
+                <span>{formatLargeCurrency(marginTarget * 0.8)}</span>
+                <span>{formatLargeCurrency(marginTarget)}</span>
+                <span>{formatLargeCurrency(marginTarget * 1.2)}</span>
+                <span>{formatLargeCurrency(marginTarget * 1.5)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground px-1">
+                <span>0%</span>
+                <span className="text-destructive font-medium">80%</span>
                 <span>100%</span>
-                <span className="text-accent">120%</span>
+                <span className="text-accent font-medium">120%</span>
                 <span>150%</span>
               </div>
             </div>
@@ -295,7 +282,7 @@ export function STIPCalculator() {
             <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Weighted Team Payout</p>
+                  <p className="font-medium">Weighted Team Financials Payout</p>
                   <p className="text-xs text-muted-foreground">
                     ({teamFinancials.ordersPayout.toFixed(0)}% + {teamFinancials.revenuePayout.toFixed(0)}% + {teamFinancials.marginPayout.toFixed(0)}%) / 3
                   </p>
@@ -337,6 +324,13 @@ export function STIPCalculator() {
                 ))}
               </div>
 
+              {/* Relative rating explanation */}
+              <div className="rounded-lg bg-secondary/50 border border-secondary p-4">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Note:</span> Your performance rating is relative - you are rated against your peers in the smallest organizational unit with at least 20 employees.
+                </p>
+              </div>
+
               {/* Rating scale explanation */}
               <div className="rounded-lg bg-muted/50 p-4">
                 <p className="mb-3 text-sm font-medium">Rating Scale</p>
@@ -373,7 +367,10 @@ export function STIPCalculator() {
       </div>
 
       {/* Payout Scale Visualization */}
-      <PayoutScaleVisual currentAchievement={avgAchievement} />
+      <PayoutScaleVisual 
+        currentAchievement={avgAchievement} 
+        personalMultiplier={personalRating.multiplier}
+      />
 
       {/* Results */}
       <ResultsPanel

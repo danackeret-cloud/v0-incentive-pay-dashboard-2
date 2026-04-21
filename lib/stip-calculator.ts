@@ -1,16 +1,5 @@
 // STIP Calculator Types and Logic
 
-export interface Team {
-  id: string
-  name: string
-  level: string
-  financialTargets: {
-    orders: number
-    revenue: number
-    margin: number // in dollars, not percentage
-  }
-}
-
 export interface PerformanceRating {
   score: 1 | 2 | 3 | 4 | 5
   label: string
@@ -20,53 +9,13 @@ export interface PerformanceRating {
 // Performance rating scale - ordered 1 to 5 for left-to-right display
 export const ratingScale: PerformanceRating[] = [
   { score: 1, label: "Unsatisfactory", multiplier: 0 },
-  { score: 2, label: "Below Expectations", multiplier: 0.9 },
-  { score: 3, label: "Meets Expectations", multiplier: 1.0 },
-  { score: 4, label: "Above Expectations", multiplier: 1.1 },
-  { score: 5, label: "Exceptional", multiplier: 1.2 },
+  { score: 2, label: "Progressing", multiplier: 0.9 },
+  { score: 3, label: "Average", multiplier: 1.0 },
+  { score: 4, label: "Superior", multiplier: 1.1 },
+  { score: 5, label: "Excellent", multiplier: 1.2 },
 ]
 
-// Sample teams with different financial targets (all in dollars)
-export const teams: Team[] = [
-  {
-    id: "tms",
-    name: "Tactical Missile Systems",
-    level: "Business Unit",
-    financialTargets: { orders: 480000000, revenue: 420000000, margin: 134400000 },
-  },
-  {
-    id: "uas",
-    name: "Uncrewed Aircraft Systems",
-    level: "Business Unit",
-    financialTargets: { orders: 350000000, revenue: 310000000, margin: 86800000 },
-  },
-  {
-    id: "lss",
-    name: "Loitering Munitions",
-    level: "Product Line",
-    financialTargets: { orders: 180000000, revenue: 145000000, margin: 50750000 },
-  },
-  {
-    id: "power",
-    name: "Power Solutions",
-    level: "Segment",
-    financialTargets: { orders: 220000000, revenue: 195000000, margin: 48750000 },
-  },
-  {
-    id: "space",
-    name: "Space Systems",
-    level: "Business Unit",
-    financialTargets: { orders: 95000000, revenue: 82000000, margin: 18040000 },
-  },
-  {
-    id: "corp",
-    name: "Corporate Functions",
-    level: "Corporate",
-    financialTargets: { orders: 1500000000, revenue: 1350000000, margin: 405000000 },
-  },
-]
-
-// Default financial targets (used when no team selected)
+// Default financial targets
 export const defaultTargets = {
   orders: 100000000,    // $100M
   revenue: 100000000,   // $100M
