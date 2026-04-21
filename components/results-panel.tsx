@@ -25,7 +25,7 @@ export function ResultsPanel({
   return (
     <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
       <CardHeader>
-        <CardTitle>Your Estimated STIP Payout</CardTitle>
+        <CardTitle>Final STIP Payout</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Formula Visualization */}
@@ -36,12 +36,12 @@ export function ResultsPanel({
           </div>
           <span className="text-2xl font-bold text-muted-foreground">x</span>
           <div className="flex flex-col items-center rounded-lg border bg-card p-4 text-center">
-            <span className="text-sm text-muted-foreground">Team Financial</span>
+            <span className="text-sm text-muted-foreground">Team Financials</span>
             <span className="text-xl font-bold">{teamFinancialPayout.toFixed(1)}%</span>
           </div>
           <span className="text-2xl font-bold text-muted-foreground">x</span>
           <div className="flex flex-col items-center rounded-lg border bg-card p-4 text-center">
-            <span className="text-sm text-muted-foreground">Personal ({ratingLabel})</span>
+            <span className="text-sm text-muted-foreground">Performance Rating</span>
             <span className="text-xl font-bold">{(personalMultiplier * 100).toFixed(0)}%</span>
           </div>
           <span className="text-2xl font-bold text-muted-foreground">=</span>
