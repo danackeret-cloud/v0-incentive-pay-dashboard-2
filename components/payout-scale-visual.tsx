@@ -248,24 +248,42 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
                   fill="white"
                 />
                 
-                {/* Final payout label - positioned above marker */}
-                <rect
-                  x={markerX - 50}
-                  y={markerY - 38}
-                  width="100"
-                  height="22"
-                  rx="4"
-                  fill="currentColor"
-                  className="text-primary"
-                />
-                <text
-                  x={markerX}
-                  y={markerY - 23}
-                  textAnchor="middle"
-                  className="fill-primary-foreground text-[11px] font-bold"
-                >
-                  {formatCurrency(finalPayoutDollars)}
-                </text>
+                {/* Final payout label - smart positioning to avoid cutoff */}
+                {(() => {
+                  // Determine label position based on marker location
+                  const isNearTop = markerY < margin.top + 50
+                  const isNearRight = markerX > width - margin.right - 60
+                  
+                  // Position label below if near top, otherwise above
+                  const labelY = isNearTop ? markerY + 28 : markerY - 38
+                  const textY = isNearTop ? markerY + 43 : markerY - 23
+                  
+                  // Position label to left if near right edge
+                  const labelX = isNearRight ? markerX - 55 : markerX - 50
+                  const textX = isNearRight ? markerX - 5 : markerX
+                  
+                  return (
+                    <>
+                      <rect
+                        x={labelX}
+                        y={labelY}
+                        width="100"
+                        height="22"
+                        rx="4"
+                        fill="currentColor"
+                        className="text-primary"
+                      />
+                      <text
+                        x={textX}
+                        y={textY}
+                        textAnchor="middle"
+                        className="fill-primary-foreground text-[11px] font-bold"
+                      >
+                        {formatCurrency(finalPayoutDollars)}
+                      </text>
+                    </>
+                  )
+                })()}
               </>
             )}
           </svg>
