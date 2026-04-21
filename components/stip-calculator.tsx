@@ -410,6 +410,7 @@ export function STIPCalculator() {
       <PayoutScaleVisual 
         teamFinancialPayout={teamFinancials.weightedPayout} 
         personalRating={personalRating.score}
+        targetBonus={finalResults.targetBonus}
       />
 
       {/* Results */}

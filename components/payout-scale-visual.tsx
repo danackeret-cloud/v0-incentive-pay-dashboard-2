@@ -1,18 +1,19 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ratingScale } from "@/lib/stip-calculator"
+import { ratingScale, formatCurrency } from "@/lib/stip-calculator"
 
 interface PayoutScaleVisualProps {
   teamFinancialPayout: number // The weighted payout percentage (0-150)
   personalRating: number // The rating score (1-5)
+  targetBonus: number // Target bonus amount in dollars
 }
 
-export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: PayoutScaleVisualProps) {
+export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetBonus }: PayoutScaleVisualProps) {
   // Chart dimensions and margins
-  const width = 450
-  const height = 280
-  const margin = { top: 30, right: 30, bottom: 60, left: 100 }
+  const width = 500
+  const height = 320
+  const margin = { top: 30, right: 40, bottom: 60, left: 110 }
   const chartWidth = width - margin.left - margin.right
   const chartHeight = height - margin.top - margin.bottom
 
@@ -31,17 +32,39 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: Payou
 
   // Calculate final payout for display
   const currentRating = ratingScale.find(r => r.score === personalRating)
-  const finalPayout = (teamFinancialPayout / 100) * (currentRating?.multiplier || 1) * 100
+  const finalPayoutPercent = (teamFinancialPayout / 100) * (currentRating?.multiplier || 1) * 100
+  const finalPayoutDollars = (targetBonus * teamFinancialPayout / 100) * (currentRating?.multiplier || 1)
 
-  // Key X-axis points
+  // Key X-axis points for Team Financial Payout
   const xTicks = [0, 40, 100, 150]
+
+  // Payout curve points (showing the cliff structure)
+  // This shows payout % at different achievement levels mapped to x-axis position
+  const curvePoints = [
+    { achievement: 0, payout: 0 },
+    { achievement: 80, payout: 0 },    // Below 80% = 0%
+    { achievement: 80, payout: 40 },   // At 80% jumps to 40%
+    { achievement: 100, payout: 100 }, // 100% = 100%
+    { achievement: 125, payout: 150 }, // 125% = 150% (max)
+    { achievement: 150, payout: 150 }, // Stays at 150%
+  ]
+
+  // Create SVG path for the curve
+  const pathD = curvePoints
+    .map((point, i) => {
+      const x = xScale(point.payout) // X is payout %
+      // Map to middle of chart for the curve visualization
+      const curveY = margin.top + chartHeight / 2 - (point.payout / 150) * (chartHeight / 3)
+      return i === 0 ? `M ${x} ${curveY}` : `L ${x} ${curveY}`
+    })
+    .join(" ")
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Payout Matrix</CardTitle>
         <CardDescription>
-          See how team financial payout and personal rating combine
+          Team financial payout (x-axis) combined with personal rating (y-axis) determines your final bonus
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -60,7 +83,11 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: Payou
                 stroke="currentColor"
                 strokeWidth="1"
                 strokeDasharray="4,4"
-                className="text-border"
+                className={
+                  payout === 40 ? "text-destructive/30" :
+                  payout === 150 ? "text-accent/30" :
+                  "text-border"
+                }
               />
             ))}
 
@@ -78,6 +105,24 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: Payou
                 className="text-border"
               />
             ))}
+
+            {/* Dollar amount labels on the right for each rating tier */}
+            {ratings.map((rating, index) => {
+              const dollarAmount = (targetBonus * teamFinancialPayout / 100) * rating.multiplier
+              return (
+                <text
+                  key={`dollar-${rating.score}`}
+                  x={width - margin.right + 5}
+                  y={yScale(index) + 4}
+                  textAnchor="start"
+                  className={`text-[9px] ${
+                    rating.score === personalRating ? "fill-primary font-bold" : "fill-muted-foreground"
+                  }`}
+                >
+                  {formatCurrency(dollarAmount)}
+                </text>
+              )
+            })}
 
             {/* X-axis */}
             <line
@@ -176,7 +221,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: Payou
                   y2={height - margin.bottom}
                   stroke="currentColor"
                   strokeWidth="2"
-                  className="text-primary/40"
+                  className="text-primary/50"
                 />
                 <line
                   x1={margin.left}
@@ -185,41 +230,41 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: Payou
                   y2={markerY}
                   stroke="currentColor"
                   strokeWidth="2"
-                  className="text-primary/40"
+                  className="text-primary/50"
                 />
 
                 {/* Marker circle */}
                 <circle
                   cx={markerX}
                   cy={markerY}
-                  r="12"
+                  r="14"
                   fill="currentColor"
                   className="text-primary"
                 />
                 <circle
                   cx={markerX}
                   cy={markerY}
-                  r="7"
+                  r="9"
                   fill="white"
                 />
                 
-                {/* Final payout label */}
+                {/* Final payout label - positioned above marker */}
                 <rect
-                  x={markerX + 15}
-                  y={markerY - 12}
-                  width="80"
-                  height="24"
+                  x={markerX - 50}
+                  y={markerY - 38}
+                  width="100"
+                  height="22"
                   rx="4"
                   fill="currentColor"
                   className="text-primary"
                 />
                 <text
-                  x={markerX + 55}
-                  y={markerY + 4}
+                  x={markerX}
+                  y={markerY - 23}
                   textAnchor="middle"
                   className="fill-primary-foreground text-[11px] font-bold"
                 >
-                  {finalPayout.toFixed(0)}% final
+                  {formatCurrency(finalPayoutDollars)}
                 </text>
               </>
             )}
@@ -227,13 +272,18 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating }: Payou
         </div>
 
         {/* Legend */}
-        <div className="mt-4 rounded-lg bg-muted/50 p-4 text-sm">
-          <p className="text-muted-foreground">
-            <span className="font-medium text-foreground">Final Payout</span> = Team Financial Payout % × Personal Rating Multiplier
-          </p>
-          <p className="mt-1 text-muted-foreground">
-            Current: <span className="font-medium text-foreground">{teamFinancialPayout.toFixed(0)}%</span> × <span className="font-medium text-foreground">{((currentRating?.multiplier || 1) * 100).toFixed(0)}%</span> = <span className="font-bold text-primary">{finalPayout.toFixed(0)}%</span> of target bonus
-          </p>
+        <div className="mt-4 rounded-lg bg-muted/50 p-4">
+          <div className="flex flex-col gap-2 text-sm">
+            <p className="text-muted-foreground">
+              <span className="font-medium text-foreground">Formula:</span> Target Bonus x Team Financial % x Personal Rating % = Final Payout
+            </p>
+            <p className="text-muted-foreground">
+              <span className="font-medium text-foreground">Your Calculation:</span>{" "}
+              {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(0)}% x {((currentRating?.multiplier || 1) * 100).toFixed(0)}% = {" "}
+              <span className="font-bold text-primary">{formatCurrency(finalPayoutDollars)}</span>
+              {" "}({finalPayoutPercent.toFixed(0)}% of target)
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>
