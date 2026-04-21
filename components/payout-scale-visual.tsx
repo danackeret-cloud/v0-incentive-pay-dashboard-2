@@ -28,7 +28,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
     { x: 80, y: 0 },
     { x: 80, y: 40 },
     { x: 100, y: 100 },
-    { x: 120, y: 150 },
+    { x: 125, y: 150 },
     { x: 150, y: 150 },
   ]
 
@@ -42,8 +42,8 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
     if (payout <= 0) return 0
     if (payout <= 40) return 80 // At 80% achievement = 40% payout
     if (payout <= 100) return 80 + ((payout - 40) / (100 - 40)) * (100 - 80) // Linear from 80-100
-    if (payout <= 150) return 100 + ((payout - 100) / (150 - 100)) * (120 - 100) // Linear from 100-120
-    return 120 // Max achievement for display purposes
+    if (payout <= 150) return 100 + ((payout - 100) / (150 - 100)) * (125 - 100) // Linear from 100-125
+    return 125 // Max achievement for display purposes
   }
   const estimatedAchievement = getAchievementFromPayout(teamPayout)
   const markerX = xScale(Math.min(Math.max(estimatedAchievement, 0), 150))
@@ -77,7 +77,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
             ))}
 
             {/* Grid lines - vertical */}
-            {[80, 100, 120].map((achievement) => (
+            {[80, 100, 125].map((achievement) => (
               <line
                 key={`v-${achievement}`}
                 x1={xScale(achievement)}
@@ -89,7 +89,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
                 strokeDasharray="4,4"
                 className={
                   achievement === 80 ? "text-destructive/50" : 
-                  achievement === 120 ? "text-accent/50" : 
+                  achievement === 125 ? "text-accent/50" : 
                   "text-muted-foreground/30"
                 }
               />
@@ -160,11 +160,9 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
             </text>
 
             {/* X-axis tick labels */}
-            <text x={xScale(0)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-muted-foreground text-[10px]">0%</text>
             <text x={xScale(80)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-destructive text-[10px] font-semibold">80%</text>
             <text x={xScale(100)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-muted-foreground text-[10px]">100%</text>
-            <text x={xScale(120)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-accent text-[10px] font-semibold">120%</text>
-            <text x={xScale(150)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-muted-foreground text-[10px]">150%</text>
+            <text x={xScale(125)} y={height - margin.bottom + 18} textAnchor="middle" className="fill-accent text-[10px] font-semibold">125%</text>
 
             {/* Y-axis tick labels */}
             <text x={margin.left - 8} y={yScale(0) + 4} textAnchor="end" className="fill-muted-foreground text-[10px]">0%</text>
@@ -229,7 +227,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalMultiplier }: P
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-accent" />
-            <span className="text-muted-foreground">120%+ = 150% max</span>
+            <span className="text-muted-foreground">125%+ = 150% max</span>
           </div>
         </div>
       </CardContent>

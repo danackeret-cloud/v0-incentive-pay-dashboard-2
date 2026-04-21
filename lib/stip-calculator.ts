@@ -30,11 +30,11 @@ export function calculatePayoutPercent(achievementPercent: number): number {
   if (achievementPercent < 100) {
     return 40 + ((achievementPercent - 80) / 20) * 60
   }
-  // 100% to 120% achievement scales from 100% to 150% payout
-  if (achievementPercent < 120) {
-    return 100 + ((achievementPercent - 100) / 20) * 50
+  // 100% to 125% achievement scales from 100% to 150% payout
+  if (achievementPercent < 125) {
+    return 100 + ((achievementPercent - 100) / 25) * 50
   }
-  // Above 120% = capped at 150%
+  // Above 125% = capped at 150%
   return 150
 }
 

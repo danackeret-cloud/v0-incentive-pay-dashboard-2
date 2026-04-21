@@ -59,7 +59,7 @@ export function STIPCalculator() {
   const getSliderMax = (target: number) => target * 2
 
   // Snap thresholds (as percentages of target)
-  const snapPoints = [80, 100, 120]
+  const snapPoints = [80, 100, 125]
   const snapTolerance = 3 // Will snap if within 3% of a threshold
 
   // Snap value to nearest threshold if close enough
@@ -181,14 +181,11 @@ export function STIPCalculator() {
                 </div>
               </div>
               <div className="relative pt-2">
-                {/* Tick marks */}
-                <div className="absolute inset-x-0 top-0 flex justify-between pointer-events-none" style={{ height: '8px' }}>
-                  <div className="w-px h-2 bg-muted-foreground/30" />
+                {/* Tick marks at 80%, 100%, 125% */}
+                <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: '8px' }}>
                   <div className="w-px h-3 bg-destructive" style={{ position: 'absolute', left: '40%' }} />
                   <div className="w-px h-3 bg-muted-foreground" style={{ position: 'absolute', left: '50%' }} />
-                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '60%' }} />
-                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', left: '75%' }} />
-                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', right: '0' }} />
+                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '62.5%' }} />
                 </div>
                 <Slider
                   value={[ordersActual]}
@@ -205,14 +202,11 @@ export function STIPCalculator() {
                   {ordersAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.ordersPayout.toFixed(0)}% payout</span>
                 </span>
               </div>
-              {/* Scale markers - positioned as % of slider width (0-200% maps to 0-100% width) */}
+              {/* Scale markers - only 80%, 100%, 125% */}
               <div className="relative h-5 text-xs text-muted-foreground mt-1">
-                <span className="absolute left-0">0%</span>
                 <span className="absolute text-destructive font-medium" style={{ left: '40%', transform: 'translateX(-50%)' }}>80%</span>
-                <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
-                <span className="absolute text-accent font-medium" style={{ left: '60%', transform: 'translateX(-50%)' }}>120%</span>
-                <span className="absolute" style={{ left: '75%', transform: 'translateX(-50%)' }}>150%</span>
-                <span className="absolute right-0">200%</span>
+                <span className="absolute font-medium" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
+                <span className="absolute text-accent font-medium" style={{ left: '62.5%', transform: 'translateX(-50%)' }}>125%</span>
               </div>
             </div>
 
@@ -240,14 +234,11 @@ export function STIPCalculator() {
                 </div>
               </div>
               <div className="relative pt-2">
-                {/* Tick marks */}
-                <div className="absolute inset-x-0 top-0 flex justify-between pointer-events-none" style={{ height: '8px' }}>
-                  <div className="w-px h-2 bg-muted-foreground/30" />
+                {/* Tick marks at 80%, 100%, 125% */}
+                <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: '8px' }}>
                   <div className="w-px h-3 bg-destructive" style={{ position: 'absolute', left: '40%' }} />
                   <div className="w-px h-3 bg-muted-foreground" style={{ position: 'absolute', left: '50%' }} />
-                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '60%' }} />
-                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', left: '75%' }} />
-                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', right: '0' }} />
+                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '62.5%' }} />
                 </div>
                 <Slider
                   value={[revenueActual]}
@@ -264,14 +255,11 @@ export function STIPCalculator() {
                   {revenueAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.revenuePayout.toFixed(0)}% payout</span>
                 </span>
               </div>
-              {/* Scale markers - positioned as % of slider width (0-200% maps to 0-100% width) */}
+              {/* Scale markers - only 80%, 100%, 125% */}
               <div className="relative h-5 text-xs text-muted-foreground mt-1">
-                <span className="absolute left-0">0%</span>
                 <span className="absolute text-destructive font-medium" style={{ left: '40%', transform: 'translateX(-50%)' }}>80%</span>
-                <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
-                <span className="absolute text-accent font-medium" style={{ left: '60%', transform: 'translateX(-50%)' }}>120%</span>
-                <span className="absolute" style={{ left: '75%', transform: 'translateX(-50%)' }}>150%</span>
-                <span className="absolute right-0">200%</span>
+                <span className="absolute font-medium" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
+                <span className="absolute text-accent font-medium" style={{ left: '62.5%', transform: 'translateX(-50%)' }}>125%</span>
               </div>
             </div>
 
@@ -301,14 +289,11 @@ export function STIPCalculator() {
                 </div>
               </div>
               <div className="relative pt-2">
-                {/* Tick marks */}
-                <div className="absolute inset-x-0 top-0 flex justify-between pointer-events-none" style={{ height: '8px' }}>
-                  <div className="w-px h-2 bg-muted-foreground/30" />
+                {/* Tick marks at 80%, 100%, 125% */}
+                <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: '8px' }}>
                   <div className="w-px h-3 bg-destructive" style={{ position: 'absolute', left: '40%' }} />
                   <div className="w-px h-3 bg-muted-foreground" style={{ position: 'absolute', left: '50%' }} />
-                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '60%' }} />
-                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', left: '75%' }} />
-                  <div className="w-px h-2 bg-muted-foreground/30" style={{ position: 'absolute', right: '0' }} />
+                  <div className="w-px h-3 bg-accent" style={{ position: 'absolute', left: '62.5%' }} />
                 </div>
                 <Slider
                   value={[marginActual]}
@@ -325,14 +310,11 @@ export function STIPCalculator() {
                   {marginAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.marginPayout.toFixed(0)}% payout</span>
                 </span>
               </div>
-              {/* Scale markers - positioned as % of slider width (0-200% maps to 0-100% width) */}
+              {/* Scale markers - only 80%, 100%, 125% */}
               <div className="relative h-5 text-xs text-muted-foreground mt-1">
-                <span className="absolute left-0">0%</span>
                 <span className="absolute text-destructive font-medium" style={{ left: '40%', transform: 'translateX(-50%)' }}>80%</span>
-                <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
-                <span className="absolute text-accent font-medium" style={{ left: '60%', transform: 'translateX(-50%)' }}>120%</span>
-                <span className="absolute" style={{ left: '75%', transform: 'translateX(-50%)' }}>150%</span>
-                <span className="absolute right-0">200%</span>
+                <span className="absolute font-medium" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
+                <span className="absolute text-accent font-medium" style={{ left: '62.5%', transform: 'translateX(-50%)' }}>125%</span>
               </div>
             </div>
 
