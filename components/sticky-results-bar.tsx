@@ -45,7 +45,7 @@ export function StickyResultsBar({
             
             {/* Performance Rating */}
             <div className="text-center">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Rating</p>
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Performance Rating</p>
               <p className="text-sm font-semibold text-accent">{(personalMultiplier * 100).toFixed(0)}%</p>
             </div>
             
