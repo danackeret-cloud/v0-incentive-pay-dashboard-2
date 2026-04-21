@@ -53,8 +53,8 @@ export function STIPCalculator() {
     [baseSalary, targetPercent, teamFinancials.weightedPayout, personalRating]
   )
 
-  // Slider range: 0% to 150% of target
-  const getSliderMax = (target: number) => target * 1.5
+  // Slider range: 0% to 200% of target
+  const getSliderMax = (target: number) => target * 2
 
   return (
     <div className="space-y-6">
@@ -153,28 +153,14 @@ export function STIPCalculator() {
                   {ordersAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.ordersPayout.toFixed(0)}% payout</span>
                 </span>
               </div>
-              {/* Scale markers - positioned as % of slider width (0-150% maps to 0-100% width) */}
-              <div className="relative h-8 text-xs text-muted-foreground">
-                <div className="absolute left-0 -translate-x-1/2 text-center">
-                  <div>$0</div>
-                  <div>0%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(80/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div className="text-destructive">{formatLargeCurrency(ordersTarget * 0.8)}</div>
-                  <div className="text-destructive font-medium">80%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(100/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div>{formatLargeCurrency(ordersTarget)}</div>
-                  <div>100%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(120/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div className="text-accent">{formatLargeCurrency(ordersTarget * 1.2)}</div>
-                  <div className="text-accent font-medium">120%</div>
-                </div>
-                <div className="absolute right-0 translate-x-1/2 text-center">
-                  <div>{formatLargeCurrency(ordersTarget * 1.5)}</div>
-                  <div>150%</div>
-                </div>
+              {/* Scale markers - positioned as % of slider width (0-200% maps to 0-100% width) */}
+              <div className="relative h-5 text-xs text-muted-foreground mt-1">
+                <span className="absolute left-0">0%</span>
+                <span className="absolute text-destructive font-medium" style={{ left: '40%', transform: 'translateX(-50%)' }}>80%</span>
+                <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
+                <span className="absolute text-accent font-medium" style={{ left: '60%', transform: 'translateX(-50%)' }}>120%</span>
+                <span className="absolute" style={{ left: '75%', transform: 'translateX(-50%)' }}>150%</span>
+                <span className="absolute right-0">200%</span>
               </div>
             </div>
 
@@ -215,28 +201,14 @@ export function STIPCalculator() {
                   {revenueAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.revenuePayout.toFixed(0)}% payout</span>
                 </span>
               </div>
-              {/* Scale markers - positioned as % of slider width (0-150% maps to 0-100% width) */}
-              <div className="relative h-8 text-xs text-muted-foreground">
-                <div className="absolute left-0 -translate-x-1/2 text-center">
-                  <div>$0</div>
-                  <div>0%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(80/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div className="text-destructive">{formatLargeCurrency(revenueTarget * 0.8)}</div>
-                  <div className="text-destructive font-medium">80%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(100/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div>{formatLargeCurrency(revenueTarget)}</div>
-                  <div>100%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(120/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div className="text-accent">{formatLargeCurrency(revenueTarget * 1.2)}</div>
-                  <div className="text-accent font-medium">120%</div>
-                </div>
-                <div className="absolute right-0 translate-x-1/2 text-center">
-                  <div>{formatLargeCurrency(revenueTarget * 1.5)}</div>
-                  <div>150%</div>
-                </div>
+              {/* Scale markers - positioned as % of slider width (0-200% maps to 0-100% width) */}
+              <div className="relative h-5 text-xs text-muted-foreground mt-1">
+                <span className="absolute left-0">0%</span>
+                <span className="absolute text-destructive font-medium" style={{ left: '40%', transform: 'translateX(-50%)' }}>80%</span>
+                <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
+                <span className="absolute text-accent font-medium" style={{ left: '60%', transform: 'translateX(-50%)' }}>120%</span>
+                <span className="absolute" style={{ left: '75%', transform: 'translateX(-50%)' }}>150%</span>
+                <span className="absolute right-0">200%</span>
               </div>
             </div>
 
@@ -277,28 +249,14 @@ export function STIPCalculator() {
                   {marginAchievement.toFixed(0)}% of target = <span className="font-semibold text-foreground">{teamFinancials.marginPayout.toFixed(0)}% payout</span>
                 </span>
               </div>
-              {/* Scale markers - positioned as % of slider width (0-150% maps to 0-100% width) */}
-              <div className="relative h-8 text-xs text-muted-foreground">
-                <div className="absolute left-0 -translate-x-1/2 text-center">
-                  <div>$0</div>
-                  <div>0%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(80/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div className="text-destructive">{formatLargeCurrency(marginTarget * 0.8)}</div>
-                  <div className="text-destructive font-medium">80%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(100/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div>{formatLargeCurrency(marginTarget)}</div>
-                  <div>100%</div>
-                </div>
-                <div className="absolute text-center" style={{ left: `${(120/150)*100}%`, transform: 'translateX(-50%)' }}>
-                  <div className="text-accent">{formatLargeCurrency(marginTarget * 1.2)}</div>
-                  <div className="text-accent font-medium">120%</div>
-                </div>
-                <div className="absolute right-0 translate-x-1/2 text-center">
-                  <div>{formatLargeCurrency(marginTarget * 1.5)}</div>
-                  <div>150%</div>
-                </div>
+              {/* Scale markers - positioned as % of slider width (0-200% maps to 0-100% width) */}
+              <div className="relative h-5 text-xs text-muted-foreground mt-1">
+                <span className="absolute left-0">0%</span>
+                <span className="absolute text-destructive font-medium" style={{ left: '40%', transform: 'translateX(-50%)' }}>80%</span>
+                <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>100%</span>
+                <span className="absolute text-accent font-medium" style={{ left: '60%', transform: 'translateX(-50%)' }}>120%</span>
+                <span className="absolute" style={{ left: '75%', transform: 'translateX(-50%)' }}>150%</span>
+                <span className="absolute right-0">200%</span>
               </div>
             </div>
 
@@ -333,15 +291,15 @@ export function STIPCalculator() {
                   <button
                     key={rating.score}
                     onClick={() => setPersonalRating(rating)}
-                    className={`rounded-lg border-2 p-3 text-center transition-all ${
+                    className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-center min-h-[100px] ${
                       personalRating.score === rating.score
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border hover:border-primary/50"
                     }`}
                   >
-                    <span className="block text-2xl font-bold">{rating.score}</span>
-                    <span className="block text-[10px] leading-tight">{rating.label}</span>
-                    <span className="mt-1 block text-sm font-medium opacity-80">
+                    <span className="text-2xl font-bold">{rating.score}</span>
+                    <span className="text-[9px] leading-tight mt-1 text-center break-words hyphens-auto">{rating.label}</span>
+                    <span className="mt-1 text-sm font-medium opacity-80">
                       {rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`}
                     </span>
                   </button>
