@@ -89,9 +89,15 @@ export function STIPCalculator() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                 <Input
                   id="salary"
-                  type="number"
-                  value={baseSalary}
-                  onChange={(e) => setBaseSalary(Number(e.target.value))}
+                  type="text"
+                  value={baseSalary.toLocaleString()}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/,/g, '')
+                    const num = Number(value)
+                    if (!isNaN(num)) {
+                      setBaseSalary(num)
+                    }
+                  }}
                   className="pl-7"
                 />
               </div>
