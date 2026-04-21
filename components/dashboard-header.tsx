@@ -1,47 +1,48 @@
 "use client"
 
-import { currentEmployee } from "@/lib/bonus-data"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { CalendarDays } from "lucide-react"
+import { EmployeeData } from "@/lib/bonus-data"
+import { Building2, Calendar } from "lucide-react"
 
-export function DashboardHeader() {
-  const initials = currentEmployee.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
+interface DashboardHeaderProps {
+  employee: EmployeeData
+}
 
-  const currentDate = new Date()
-  const quarter = Math.ceil((currentDate.getMonth() + 1) / 3)
-  const year = currentDate.getFullYear()
-
+export function DashboardHeader({ employee }: DashboardHeaderProps) {
   return (
-    <header className="border-b bg-card">
-      <div className="container mx-auto flex flex-col gap-4 px-4 py-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-12 w-12">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <h1 className="text-xl font-bold">{currentEmployee.name}</h1>
-            <p className="text-sm text-muted-foreground">
-              {currentEmployee.title} • {currentEmployee.department}
-            </p>
-          </div>
+    <header className="space-y-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            STIP Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Short-Term Incentive Pay Overview
+          </p>
         </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <CalendarDays className="h-4 w-4" />
-            <span>
-              Q{quarter} {year} Performance Period
-            </span>
-          </div>
-          <Badge variant="secondary" className="bg-primary/10 text-primary">
-            Short-Term Incentive Plan
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="gap-1.5">
+            <Calendar className="h-3 w-3" />
+            {employee.fiscalYear}
           </Badge>
+          <Badge variant="secondary" className="gap-1.5">
+            <Building2 className="h-3 w-3" />
+            {employee.teamLevel} Level
+          </Badge>
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-4 pb-4 border-b">
+        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+          <span className="text-xl font-semibold text-primary">
+            {employee.name.split(" ").map(n => n[0]).join("")}
+          </span>
+        </div>
+        <div>
+          <div className="font-semibold text-foreground">{employee.name}</div>
+          <div className="text-sm text-muted-foreground">
+            {employee.title} • {employee.department}
+          </div>
         </div>
       </div>
     </header>

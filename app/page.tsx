@@ -1,57 +1,53 @@
 import { DashboardHeader } from "@/components/dashboard-header"
-import { BonusSummary } from "@/components/bonus-summary"
-import { PayoutTiers } from "@/components/payout-tiers"
-import { KPIBreakdown } from "@/components/kpi-breakdown"
-import { PerformanceChart } from "@/components/performance-chart"
-import { BonusCalculator } from "@/components/bonus-calculator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { STIPSummary } from "@/components/stip-summary"
+import { PayoutScale } from "@/components/payout-scale"
+import { TeamFinancials } from "@/components/team-financials"
+import { PersonalPerformance } from "@/components/personal-performance"
+import { FormulaBreakdown } from "@/components/formula-breakdown"
+import { demoSTIPData, calculateTeamFinancialPerformance } from "@/lib/bonus-data"
 
-export default function IncentiveDashboard() {
+export default function STIPDashboard() {
+  const teamPerformance = calculateTeamFinancialPerformance(demoSTIPData.teamFinancials)
+  
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold tracking-tight text-balance">
-            Short-Term Incentive Pay Dashboard
-          </h2>
-          <p className="mt-1 text-muted-foreground text-pretty">
-            Track your performance and understand how your bonus is calculated
-          </p>
-        </div>
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header */}
+        <DashboardHeader employee={demoSTIPData.employee} />
 
         {/* Summary Cards */}
-        <section className="mb-8">
-          <BonusSummary />
+        <section className="mt-8">
+          <STIPSummary data={demoSTIPData} />
         </section>
 
-        {/* Payout Tiers */}
-        <section className="mb-8">
-          <PayoutTiers />
+        {/* Formula Breakdown */}
+        <section className="mt-8">
+          <FormulaBreakdown data={demoSTIPData} />
         </section>
 
-        {/* Performance Charts */}
-        <section className="mb-8">
-          <PerformanceChart />
+        {/* Payout Scale */}
+        <section className="mt-8">
+          <PayoutScale currentAchievement={teamPerformance.weightedAchievement} />
         </section>
 
-        {/* Detailed Views */}
-        <Tabs defaultValue="breakdown" className="mb-8">
-          <TabsList>
-            <TabsTrigger value="breakdown">KPI Breakdown</TabsTrigger>
-            <TabsTrigger value="calculator">How It Works</TabsTrigger>
-          </TabsList>
-          <TabsContent value="breakdown" className="mt-4">
-            <KPIBreakdown />
-          </TabsContent>
-          <TabsContent value="calculator" className="mt-4">
-            <BonusCalculator />
-          </TabsContent>
-        </Tabs>
+        {/* Two Column Layout for Details */}
+        <section className="mt-8 grid gap-8 lg:grid-cols-2">
+          {/* Team Financials */}
+          <TeamFinancials 
+            metrics={demoSTIPData.teamFinancials} 
+            teamLevel={demoSTIPData.employee.teamLevel}
+          />
+          
+          {/* Personal Performance */}
+          <PersonalPerformance 
+            avPriorities={demoSTIPData.avPriorities}
+            individualGoals={demoSTIPData.individualGoals}
+            rating={demoSTIPData.personalRating}
+          />
+        </section>
 
         {/* Footer */}
-        <footer className="border-t pt-6 text-center text-sm text-muted-foreground">
+        <footer className="mt-12 border-t pt-6 text-center text-sm text-muted-foreground">
           <p>
             This dashboard shows estimated bonus calculations based on current performance data.
             Final bonus amounts are subject to management approval and may vary.

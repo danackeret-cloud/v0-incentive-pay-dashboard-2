@@ -1,195 +1,212 @@
-export interface KPI {
+// STIP Structure Types and Data
+
+export interface TeamFinancialMetric {
   id: string
   name: string
-  weight: number
-  threshold: number
   target: number
-  maximum: number
-  current: number
-  unit: string
-  category: "individual" | "team" | "company"
-}
-
-export interface PayoutTier {
-  level: "threshold" | "target" | "maximum"
-  percentage: number
-  label: string
+  actual: number
+  unit: "currency" | "percentage" | "number"
   description: string
 }
 
-export interface Employee {
+export interface AVPriority {
   id: string
+  name: string
+  description: string
+  selected: boolean
+}
+
+export interface IndividualGoal {
+  id: string
+  name: string
+  description: string
+  status: "on-track" | "at-risk" | "completed" | "not-started"
+}
+
+export interface PerformanceRating {
+  score: 1 | 2 | 3 | 4 | 5
+  label: string
+  multiplier: number
+}
+
+export interface EmployeeData {
   name: string
   title: string
   department: string
+  teamLevel: string // Corp > Segment > Group > BU > Product
   baseSalary: number
   targetBonusPercent: number
-  performanceRating: number
+  fiscalYear: string
 }
 
-export const currentEmployee: Employee = {
-  id: "emp-001",
-  name: "Sarah Chen",
-  title: "Senior Account Executive",
-  department: "Sales",
-  baseSalary: 95000,
-  targetBonusPercent: 20,
-  performanceRating: 4.2,
+export interface STIPData {
+  employee: EmployeeData
+  teamFinancials: TeamFinancialMetric[]
+  avPriorities: AVPriority[]
+  individualGoals: IndividualGoal[]
+  personalRating: PerformanceRating
 }
 
-export const payoutTiers: PayoutTier[] = [
-  {
-    level: "threshold",
-    percentage: 50,
-    label: "Threshold",
-    description: "Minimum performance level to qualify for any bonus payout",
-  },
-  {
-    level: "target",
-    percentage: 100,
-    label: "Target",
-    description: "Expected performance level for full target bonus",
-  },
-  {
-    level: "maximum",
-    percentage: 150,
-    label: "Maximum",
-    description: "Outstanding performance earns up to 150% of target bonus",
-  },
+// Performance rating scale
+export const ratingScale: PerformanceRating[] = [
+  { score: 5, label: "Exceptional", multiplier: 1.2 },
+  { score: 4, label: "Above Expectations", multiplier: 1.1 },
+  { score: 3, label: "Meets Expectations", multiplier: 1.0 },
+  { score: 2, label: "Below Expectations", multiplier: 0.9 },
+  { score: 1, label: "Unsatisfactory", multiplier: 0 },
 ]
 
-export const kpis: KPI[] = [
-  {
-    id: "kpi-1",
-    name: "Revenue Achievement",
-    weight: 30,
-    threshold: 80,
-    target: 100,
-    maximum: 120,
-    current: 108,
-    unit: "%",
-    category: "individual",
-  },
-  {
-    id: "kpi-2",
-    name: "Order Volume",
-    weight: 20,
-    threshold: 150,
-    target: 200,
-    maximum: 250,
-    current: 187,
-    unit: "orders",
-    category: "individual",
-  },
-  {
-    id: "kpi-3",
-    name: "Performance Rating",
-    weight: 15,
-    threshold: 3.0,
-    target: 4.0,
-    maximum: 5.0,
-    current: 4.2,
-    unit: "/5",
-    category: "individual",
-  },
-  {
-    id: "kpi-4",
-    name: "Team Revenue",
-    weight: 15,
-    threshold: 85,
-    target: 100,
-    maximum: 115,
-    current: 103,
-    unit: "%",
-    category: "team",
-  },
-  {
-    id: "kpi-5",
-    name: "Company Profit Margin",
-    weight: 10,
-    threshold: 12,
-    target: 15,
-    maximum: 18,
-    current: 14.2,
-    unit: "%",
-    category: "company",
-  },
-  {
-    id: "kpi-6",
-    name: "Company Revenue Growth",
-    weight: 10,
-    threshold: 5,
-    target: 10,
-    maximum: 15,
-    current: 11.5,
-    unit: "%",
-    category: "company",
-  },
+// AV Priorities Menu
+export const avPrioritiesMenu: Omit<AVPriority, "selected">[] = [
+  { id: "mfg-supply", name: "Mfg & Supply Chain Resiliency", description: "Strengthen manufacturing capabilities and supply chain reliability" },
+  { id: "branding", name: "Branding", description: "Enhance company brand recognition and market positioning" },
+  { id: "oracle-fusion", name: "Oracle Fusion Implementation", description: "Support successful ERP system implementation" },
+  { id: "commonality", name: "Commonality", description: "Drive product and process standardization across business units" },
+  { id: "international", name: "International Expansion", description: "Expand presence in international markets" },
 ]
 
-export function calculateKPIScore(kpi: KPI): number {
-  const { threshold, target, maximum, current } = kpi
-
-  if (current < threshold) {
-    return 0
-  } else if (current >= maximum) {
-    return 150
-  } else if (current >= target) {
-    // Between target and maximum: 100% to 150%
-    const progress = (current - target) / (maximum - target)
-    return 100 + progress * 50
-  } else {
-    // Between threshold and target: 50% to 100%
-    const progress = (current - threshold) / (target - threshold)
-    return 50 + progress * 50
+// Payout scale calculation for a single metric
+export function calculatePayoutPercent(achievementPercent: number): number {
+  // Below 80% = 0% payout
+  if (achievementPercent < 0.8) return 0
+  // 80% achievement = 40% payout, scales linearly to 100% = 100% payout
+  if (achievementPercent < 1.0) {
+    // Linear interpolation from (0.8, 0.4) to (1.0, 1.0)
+    return 0.4 + ((achievementPercent - 0.8) / 0.2) * 0.6
   }
+  // 100% to 120% achievement scales from 100% to 150% payout
+  if (achievementPercent < 1.2) {
+    // Linear interpolation from (1.0, 1.0) to (1.2, 1.5)
+    return 1.0 + ((achievementPercent - 1.0) / 0.2) * 0.5
+  }
+  // Above 120% = capped at 150%
+  return 1.5
 }
 
-export function calculateWeightedScore(kpis: KPI[]): number {
-  let totalWeightedScore = 0
-  let totalWeight = 0
-
-  for (const kpi of kpis) {
-    const score = calculateKPIScore(kpi)
-    totalWeightedScore += score * (kpi.weight / 100)
-    totalWeight += kpi.weight
-  }
-
-  return totalWeight > 0 ? (totalWeightedScore / totalWeight) * 100 : 0
+// Calculate team financial performance
+export function calculateTeamFinancialPerformance(metrics: TeamFinancialMetric[]): {
+  individualAchievements: { id: string; name: string; achievement: number; payout: number }[]
+  weightedAchievement: number
+  weightedPayout: number
+} {
+  const weight = 1 / metrics.length // Equal weighting (33.33% each)
+  
+  const individualAchievements = metrics.map(metric => {
+    const achievement = metric.actual / metric.target
+    const payout = calculatePayoutPercent(achievement)
+    return { id: metric.id, name: metric.name, achievement, payout }
+  })
+  
+  const weightedAchievement = individualAchievements.reduce((sum, m) => sum + m.achievement * weight, 0)
+  const weightedPayout = individualAchievements.reduce((sum, m) => sum + m.payout * weight, 0)
+  
+  return { individualAchievements, weightedAchievement, weightedPayout }
 }
 
-export function calculateBonusAmount(
-  employee: Employee,
-  kpis: KPI[]
-): { amount: number; percentage: number } {
-  const weightedScore = calculateWeightedScore(kpis)
-  const targetBonus = employee.baseSalary * (employee.targetBonusPercent / 100)
-  const bonusMultiplier = weightedScore / 100
-  const amount = targetBonus * bonusMultiplier
-
+// Calculate final STIP payout
+export function calculateSTIPPayout(data: STIPData): {
+  targetBonus: number
+  teamFinancialPayout: number
+  personalMultiplier: number
+  finalPayoutPercent: number
+  finalPayoutAmount: number
+  teamPerformance: ReturnType<typeof calculateTeamFinancialPerformance>
+} {
+  const targetBonus = data.employee.baseSalary * data.employee.targetBonusPercent
+  const teamPerformance = calculateTeamFinancialPerformance(data.teamFinancials)
+  const teamFinancialPayout = teamPerformance.weightedPayout
+  const personalMultiplier = data.personalRating.multiplier
+  
+  const finalPayoutPercent = teamFinancialPayout * personalMultiplier
+  const finalPayoutAmount = targetBonus * finalPayoutPercent
+  
   return {
-    amount: Math.round(amount),
-    percentage: Math.round(weightedScore),
+    targetBonus,
+    teamFinancialPayout,
+    personalMultiplier,
+    finalPayoutPercent,
+    finalPayoutAmount,
+    teamPerformance,
   }
 }
 
-export function getCategoryKPIs(kpis: KPI[], category: KPI["category"]): KPI[] {
-  return kpis.filter((kpi) => kpi.category === category)
+// Demo employee data
+export const demoSTIPData: STIPData = {
+  employee: {
+    name: "Sarah Chen",
+    title: "Senior Account Executive",
+    department: "Tactical Missile Systems",
+    teamLevel: "Business Unit",
+    baseSalary: 125000,
+    targetBonusPercent: 0.15,
+    fiscalYear: "FY2026",
+  },
+  teamFinancials: [
+    {
+      id: "orders",
+      name: "Orders",
+      target: 48000000,
+      actual: 52800000,
+      unit: "currency",
+      description: "New orders booked in fiscal year",
+    },
+    {
+      id: "revenue",
+      name: "Revenue",
+      target: 42000000,
+      actual: 44100000,
+      unit: "currency",
+      description: "Recognized revenue for fiscal year",
+    },
+    {
+      id: "margin",
+      name: "Adj. Gross Margin",
+      target: 0.32,
+      actual: 0.298,
+      unit: "percentage",
+      description: "Adjusted gross margin percentage",
+    },
+  ],
+  avPriorities: [
+    { ...avPrioritiesMenu[0], selected: true },
+    { ...avPrioritiesMenu[2], selected: true },
+    { ...avPrioritiesMenu[4], selected: true },
+  ],
+  individualGoals: [
+    {
+      id: "goal-1",
+      name: "Expand APAC Distribution Network",
+      description: "Establish partnerships with 3 new distributors in APAC region",
+      status: "completed",
+    },
+    {
+      id: "goal-2",
+      name: "Achieve 95% Customer Satisfaction",
+      description: "Maintain customer satisfaction score above 95% across all accounts",
+      status: "on-track",
+    },
+    {
+      id: "goal-3",
+      name: "Mentor 2 Junior Team Members",
+      description: "Provide mentorship and development support to new team members",
+      status: "on-track",
+    },
+  ],
+  personalRating: ratingScale[1], // 4 - Above Expectations
 }
 
-export function getCategoryWeight(kpis: KPI[], category: KPI["category"]): number {
-  return getCategoryKPIs(kpis, category).reduce((sum, kpi) => sum + kpi.weight, 0)
+// Format currency
+export function formatCurrency(value: number): string {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(1)}M`
+  }
+  if (value >= 1000) {
+    return `$${(value / 1000).toFixed(0)}K`
+  }
+  return `$${value.toLocaleString()}`
 }
 
-export function getCategoryScore(kpis: KPI[], category: KPI["category"]): number {
-  const categoryKPIs = getCategoryKPIs(kpis, category)
-  if (categoryKPIs.length === 0) return 0
-
-  const totalWeight = categoryKPIs.reduce((sum, kpi) => sum + kpi.weight, 0)
-  const weightedScore = categoryKPIs.reduce((sum, kpi) => {
-    const score = calculateKPIScore(kpi)
-    return sum + score * (kpi.weight / totalWeight)
-  }, 0)
-
-  return Math.round(weightedScore)
+// Format percentage
+export function formatPercent(value: number, decimals: number = 1): string {
+  return `${(value * 100).toFixed(decimals)}%`
 }
