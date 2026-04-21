@@ -8,11 +8,11 @@ export interface PerformanceRating {
 
 // Performance rating scale - ordered 1 to 5 for left-to-right display
 export const ratingScale: PerformanceRating[] = [
-  { score: 1, label: "Unsatisfactory", multiplier: 0 },
+  { score: 1, label: "Needs Improvement", multiplier: 0 },
   { score: 2, label: "Progressing", multiplier: 0.9 },
-  { score: 3, label: "Average", multiplier: 1.0 },
-  { score: 4, label: "Superior", multiplier: 1.1 },
-  { score: 5, label: "Excellent", multiplier: 1.2 },
+  { score: 3, label: "Effective", multiplier: 1.0 },
+  { score: 4, label: "Excellent", multiplier: 1.1 },
+  { score: 5, label: "Outstanding", multiplier: 1.2 },
 ]
 
 // Default financial targets

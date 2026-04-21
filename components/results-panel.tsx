@@ -86,7 +86,7 @@ export function ResultsPanel({
         {isZeroPayout && (
           <div className="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
             {personalMultiplier === 0 
-              ? "An 'Unsatisfactory' rating results in $0 payout regardless of team performance."
+              ? "A 'Needs Improvement' rating results in $0 payout regardless of team performance."
               : "Team financial performance below 80% results in $0 payout."}
           </div>
         )}
