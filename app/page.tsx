@@ -2,7 +2,7 @@ import { STIPCalculator } from "@/components/stip-calculator"
 
 export default function STIPCalculatorPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24">
       <main className="container mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
         <header className="mb-8 text-center">
@@ -14,6 +14,15 @@ export default function STIPCalculatorPage() {
             team performance and your personal rating affect your bonus.
           </p>
         </header>
+
+        {/* Discretionary Disclaimer */}
+        <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-50 dark:bg-amber-950/20 p-4">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            <span className="font-semibold">Important:</span> This calculator is for informational purposes only. 
+            Actual STIP payouts are not guaranteed and remain at the sole discretion of management. 
+            All bonus payments are subject to approval and may be adjusted or withheld based on company performance and other factors.
+          </p>
+        </div>
 
         {/* How It Works */}
         <div className="mb-8 rounded-lg border bg-card p-4">
