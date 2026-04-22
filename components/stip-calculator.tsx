@@ -42,9 +42,9 @@ export function STIPCalculator() {
 
   // Local input states for target fields (allows clearing while typing)
   const [targetPercentInput, setTargetPercentInput] = useState("15")
-  const [ordersTargetInput, setOrdersTargetInput] = useState((defaultTargets.orders / 1000000).toString())
-  const [revenueTargetInput, setRevenueTargetInput] = useState((defaultTargets.revenue / 1000000).toString())
-  const [marginTargetInput, setMarginTargetInput] = useState((defaultTargets.margin / 1000000).toString())
+  const [ordersTargetInput, setOrdersTargetInput] = useState((defaultTargets.orders / 1000000).toLocaleString())
+  const [revenueTargetInput, setRevenueTargetInput] = useState((defaultTargets.revenue / 1000000).toLocaleString())
+  const [marginTargetInput, setMarginTargetInput] = useState((defaultTargets.margin / 1000000).toLocaleString())
 
   // Calculate achievement percentages
   const ordersAchievement = calculateAchievementPercent(ordersActual, ordersTarget)
@@ -64,6 +64,9 @@ export function STIPCalculator() {
 
   // Slider range: 0% to 200% of target
   const getSliderMax = (target: number) => target * 2
+
+  // Helper to format number with commas
+  const formatWithCommas = (num: number) => num.toLocaleString()
 
   // Snap thresholds (as percentages of target)
   const snapPoints = [80, 100, 125]
@@ -213,9 +216,11 @@ export function STIPCalculator() {
                       }}
                       onBlur={() => {
                         // Reset to current valid value on blur if empty/invalid
-                        const num = Number(ordersTargetInput)
+                        const num = Number(ordersTargetInput.replace(/,/g, ''))
                         if (isNaN(num) || num <= 0) {
-                          setOrdersTargetInput((ordersTarget / 1000000).toString())
+                          setOrdersTargetInput(formatWithCommas(ordersTarget / 1000000))
+                        } else {
+                          setOrdersTargetInput(formatWithCommas(num))
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -277,9 +282,11 @@ export function STIPCalculator() {
                         }
                       }}
                       onBlur={() => {
-                        const num = Number(revenueTargetInput)
+                        const num = Number(revenueTargetInput.replace(/,/g, ''))
                         if (isNaN(num) || num <= 0) {
-                          setRevenueTargetInput((revenueTarget / 1000000).toString())
+                          setRevenueTargetInput(formatWithCommas(revenueTarget / 1000000))
+                        } else {
+                          setRevenueTargetInput(formatWithCommas(num))
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -343,9 +350,11 @@ export function STIPCalculator() {
                         }
                       }}
                       onBlur={() => {
-                        const num = Number(marginTargetInput)
+                        const num = Number(marginTargetInput.replace(/,/g, ''))
                         if (isNaN(num) || num <= 0) {
-                          setMarginTargetInput((marginTarget / 1000000).toString())
+                          setMarginTargetInput(formatWithCommas(marginTarget / 1000000))
+                        } else {
+                          setMarginTargetInput(formatWithCommas(num))
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
