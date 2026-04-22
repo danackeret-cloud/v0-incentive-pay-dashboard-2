@@ -413,7 +413,7 @@ export function STIPCalculator() {
           <CardHeader>
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
-              Your manager assigns a rating based on your AV Priorities and Individual/Team Goals. This rating is a multiplier on your team financial payout.
+              Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned in a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. This rating is a multiplier on your team financial payout.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -437,13 +437,6 @@ export function STIPCalculator() {
                     </span>
                   </button>
                 ))}
-              </div>
-
-              {/* Relative rating explanation */}
-              <div className="rounded-lg bg-secondary/50 border border-secondary p-4">
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Forced Curve:</span> Ratings are relative to your peers in the smallest organizational unit with at least 20 employees. The distribution is forced: approximately 5% receive a 1, 10% a 2, 70% a 3, 10% a 4, and 5% a 5.
-                </p>
               </div>
 
               {/* Rating scale explanation */}
