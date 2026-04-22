@@ -12,8 +12,8 @@ interface PayoutScaleVisualProps {
 export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetBonus }: PayoutScaleVisualProps) {
   // Chart dimensions and margins
   const width = 500
-  const height = 320
-  const margin = { top: 30, right: 40, bottom: 60, left: 110 }
+  const height = 250
+  const margin = { top: 25, right: 45, bottom: 40, left: 75 }
   const chartWidth = width - margin.left - margin.right
   const chartHeight = height - margin.top - margin.bottom
 
@@ -158,13 +158,13 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
 
             {/* Y-axis label */}
             <text
-              x={15}
+              x={12}
               y={margin.top + chartHeight / 2}
               textAnchor="middle"
-              className="fill-foreground text-[11px] font-medium"
-              transform={`rotate(-90, 15, ${margin.top + chartHeight / 2})`}
+              className="fill-foreground text-[10px] font-medium"
+              transform={`rotate(-90, 12, ${margin.top + chartHeight / 2})`}
             >
-              Personal Performance Rating
+              Rating (Multiplier)
             </text>
 
             {/* X-axis tick labels */}
@@ -184,30 +184,19 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
               </text>
             ))}
 
-            {/* Y-axis tick labels - Rating with multiplier */}
+            {/* Y-axis tick labels - Rating with multiplier on single line */}
             {ratings.map((rating, index) => (
-              <g key={`ylabel-${rating.score}`}>
-                <text
-                  x={margin.left - 8}
-                  y={yScale(index) + 4}
-                  textAnchor="end"
-                  className={`text-[10px] font-medium ${
-                    rating.score === personalRating ? "fill-primary" : "fill-foreground"
-                  }`}
-                >
-                  {rating.score} - {rating.label}
-                </text>
-                <text
-                  x={margin.left - 8}
-                  y={yScale(index) + 14}
-                  textAnchor="end"
-                  className={`text-[9px] ${
-                    rating.score === personalRating ? "fill-primary" : "fill-muted-foreground"
-                  }`}
-                >
-                  ({rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`})
-                </text>
-              </g>
+              <text
+                key={`ylabel-${rating.score}`}
+                x={margin.left - 8}
+                y={yScale(index) + 4}
+                textAnchor="end"
+                className={`text-[10px] ${
+                  rating.score === personalRating ? "fill-primary font-semibold" : "fill-muted-foreground"
+                }`}
+              >
+                {rating.score} ({rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`})
+              </text>
             ))}
 
             {/* Current position marker */}
@@ -290,7 +279,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
         </div>
 
         {/* Legend */}
-        <div className="mt-4 rounded-lg bg-muted/50 p-4">
+        <div className="mt-3 rounded-lg bg-muted/50 p-3">
           <div className="flex flex-col gap-2 text-sm">
             <p className="text-muted-foreground">
               <span className="font-medium text-foreground">Formula:</span> Target Bonus x Team Financial % x Personal Rating % = Final Payout

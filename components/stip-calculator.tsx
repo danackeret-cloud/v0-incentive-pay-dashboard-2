@@ -40,6 +40,12 @@ export function STIPCalculator() {
   // Personal rating - default to Average (score 3)
   const [personalRating, setPersonalRating] = useState<PerformanceRating>(ratingScale[2])
 
+  // Local input states for target fields (allows clearing while typing)
+  const [targetPercentInput, setTargetPercentInput] = useState("15")
+  const [ordersTargetInput, setOrdersTargetInput] = useState((defaultTargets.orders / 1000000).toLocaleString())
+  const [revenueTargetInput, setRevenueTargetInput] = useState((defaultTargets.revenue / 1000000).toLocaleString())
+  const [marginTargetInput, setMarginTargetInput] = useState((defaultTargets.margin / 1000000).toLocaleString())
+
   // Calculate achievement percentages
   const ordersAchievement = calculateAchievementPercent(ordersActual, ordersTarget)
   const revenueAchievement = calculateAchievementPercent(revenueActual, revenueTarget)
@@ -58,6 +64,9 @@ export function STIPCalculator() {
 
   // Slider range: 0% to 200% of target
   const getSliderMax = (target: number) => target * 2
+
+  // Helper to format number with commas
+  const formatWithCommas = (num: number) => num.toLocaleString()
 
   // Snap thresholds (as percentages of target)
   const snapPoints = [80, 100, 125]
@@ -112,20 +121,22 @@ export function STIPCalculator() {
                   min={0}
                   max={100}
                   step={1}
-                  value={targetPercent}
+                  value={targetPercentInput}
                   onChange={(e) => {
                     const value = e.target.value
-                    // Allow empty string while typing
-                    if (value === '') {
-                      setTargetPercent(0)
-                      return
-                    }
+                    setTargetPercentInput(value)
                     const num = Number(value)
                     if (!isNaN(num) && num >= 0 && num <= 100) {
                       setTargetPercent(num)
                     }
                   }}
-                  className="pr-7 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  onBlur={() => {
+                    const num = Number(targetPercentInput)
+                    if (isNaN(num) || num < 0 || num > 100) {
+                      setTargetPercentInput(targetPercent.toString())
+                    }
+                  }}
+                  className="pr-7"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
               </div>
@@ -167,7 +178,7 @@ export function STIPCalculator() {
       {/* Two-column layout: Team Financials & Personal Rating */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Team Financial Performance */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Team Financial Performance</CardTitle>
             <CardDescription>
@@ -180,7 +191,7 @@ export function STIPCalculator() {
               </p>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="flex-1 flex flex-col space-y-6">
             {/* Orders */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -191,16 +202,25 @@ export function STIPCalculator() {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
                       type="text"
-                      value={(ordersTarget / 1000000).toLocaleString()}
+                      value={ordersTargetInput}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
+                        setOrdersTargetInput(value)
                         const num = Number(value)
-                        if (!isNaN(num)) {
+                        if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
+                          const currentAchievement = ordersTarget > 0 ? ordersActual / ordersTarget : 1
                           setOrdersTarget(newTarget)
-                          // Keep actual at same achievement %
-                          const currentAchievement = ordersActual / ordersTarget
                           setOrdersActual(newTarget * currentAchievement)
+                        }
+                      }}
+                      onBlur={() => {
+                        // Reset to current valid value on blur if empty/invalid
+                        const num = Number(ordersTargetInput.replace(/,/g, ''))
+                        if (isNaN(num) || num <= 0) {
+                          setOrdersTargetInput(formatWithCommas(ordersTarget / 1000000))
+                        } else {
+                          setOrdersTargetInput(formatWithCommas(num))
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -249,15 +269,24 @@ export function STIPCalculator() {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
                       type="text"
-                      value={(revenueTarget / 1000000).toLocaleString()}
+                      value={revenueTargetInput}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
+                        setRevenueTargetInput(value)
                         const num = Number(value)
-                        if (!isNaN(num)) {
+                        if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
+                          const currentAchievement = revenueTarget > 0 ? revenueActual / revenueTarget : 1
                           setRevenueTarget(newTarget)
-                          const currentAchievement = revenueActual / revenueTarget
                           setRevenueActual(newTarget * currentAchievement)
+                        }
+                      }}
+                      onBlur={() => {
+                        const num = Number(revenueTargetInput.replace(/,/g, ''))
+                        if (isNaN(num) || num <= 0) {
+                          setRevenueTargetInput(formatWithCommas(revenueTarget / 1000000))
+                        } else {
+                          setRevenueTargetInput(formatWithCommas(num))
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -308,15 +337,24 @@ export function STIPCalculator() {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
                       type="text"
-                      value={(marginTarget / 1000000).toLocaleString()}
+                      value={marginTargetInput}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
+                        setMarginTargetInput(value)
                         const num = Number(value)
-                        if (!isNaN(num)) {
+                        if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
+                          const currentAchievement = marginTarget > 0 ? marginActual / marginTarget : 1
                           setMarginTarget(newTarget)
-                          const currentAchievement = marginActual / marginTarget
                           setMarginActual(newTarget * currentAchievement)
+                        }
+                      }}
+                      onBlur={() => {
+                        const num = Number(marginTargetInput.replace(/,/g, ''))
+                        if (isNaN(num) || num <= 0) {
+                          setMarginTargetInput(formatWithCommas(marginTarget / 1000000))
+                        } else {
+                          setMarginTargetInput(formatWithCommas(num))
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -356,7 +394,7 @@ export function STIPCalculator() {
             </div>
 
             {/* Weighted Result */}
-            <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
+            <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Team Financials Payout</p>
@@ -371,41 +409,34 @@ export function STIPCalculator() {
         </Card>
 
         {/* Personal Rating */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
-              Your manager assigns a rating based on your AV Priorities and Individual/Team Goals. This rating is a multiplier on your team financial payout.
+              Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned on a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. Your rating is a multiplier on your team financials payout.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
+          <CardContent className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col space-y-6">
               {/* Rating buttons - 1 to 5 left to right */}
               <div className="grid grid-cols-5 gap-2">
                 {ratingScale.map((rating) => (
                   <button
                     key={rating.score}
                     onClick={() => setPersonalRating(rating)}
-                    className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-center min-h-[100px] ${
+                    className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-between min-h-[100px] ${
                       personalRating.score === rating.score
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border hover:border-primary/50"
                     }`}
                   >
                     <span className="text-2xl font-bold">{rating.score}</span>
-                    <span className="text-[9px] leading-tight mt-1 text-center break-words hyphens-auto">{rating.label}</span>
-                    <span className="mt-1 text-sm font-medium opacity-80">
+                    <span className="text-[9px] leading-tight text-center break-words hyphens-auto flex-1 flex items-center">{rating.label}</span>
+                    <span className="text-sm font-medium opacity-80">
                       {rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`}
                     </span>
                   </button>
                 ))}
-              </div>
-
-              {/* Relative rating explanation */}
-              <div className="rounded-lg bg-secondary/50 border border-secondary p-4">
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Note:</span> Your performance rating is relative - you are rated against your peers in the smallest organizational unit with at least 20 employees.
-                </p>
               </div>
 
               {/* Rating scale explanation */}
@@ -427,7 +458,7 @@ export function STIPCalculator() {
               </div>
 
               {/* Selected rating highlight */}
-              <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
+              <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Your Rating Multiplier</p>
