@@ -41,6 +41,7 @@ export function STIPCalculator() {
   const [personalRating, setPersonalRating] = useState<PerformanceRating>(ratingScale[2])
 
   // Local input states for target fields (allows clearing while typing)
+  const [targetPercentInput, setTargetPercentInput] = useState("15")
   const [ordersTargetInput, setOrdersTargetInput] = useState((defaultTargets.orders / 1000000).toString())
   const [revenueTargetInput, setRevenueTargetInput] = useState((defaultTargets.revenue / 1000000).toString())
   const [marginTargetInput, setMarginTargetInput] = useState((defaultTargets.margin / 1000000).toString())
@@ -117,20 +118,22 @@ export function STIPCalculator() {
                   min={0}
                   max={100}
                   step={1}
-                  value={targetPercent}
+                  value={targetPercentInput}
                   onChange={(e) => {
                     const value = e.target.value
-                    // Allow empty string while typing
-                    if (value === '') {
-                      setTargetPercent(0)
-                      return
-                    }
+                    setTargetPercentInput(value)
                     const num = Number(value)
                     if (!isNaN(num) && num >= 0 && num <= 100) {
                       setTargetPercent(num)
                     }
                   }}
-                  className="pr-7 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  onBlur={() => {
+                    const num = Number(targetPercentInput)
+                    if (isNaN(num) || num < 0 || num > 100) {
+                      setTargetPercentInput(targetPercent.toString())
+                    }
+                  }}
+                  className="pr-7"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
               </div>
