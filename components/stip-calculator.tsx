@@ -40,6 +40,11 @@ export function STIPCalculator() {
   // Personal rating - default to Average (score 3)
   const [personalRating, setPersonalRating] = useState<PerformanceRating>(ratingScale[2])
 
+  // Local input states for target fields (allows clearing while typing)
+  const [ordersTargetInput, setOrdersTargetInput] = useState((defaultTargets.orders / 1000000).toString())
+  const [revenueTargetInput, setRevenueTargetInput] = useState((defaultTargets.revenue / 1000000).toString())
+  const [marginTargetInput, setMarginTargetInput] = useState((defaultTargets.margin / 1000000).toString())
+
   // Calculate achievement percentages
   const ordersAchievement = calculateAchievementPercent(ordersActual, ordersTarget)
   const revenueAchievement = calculateAchievementPercent(revenueActual, revenueTarget)
@@ -191,18 +196,23 @@ export function STIPCalculator() {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
                       type="text"
-                      value={(ordersTarget / 1000000).toLocaleString()}
+                      value={ordersTargetInput}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
+                        setOrdersTargetInput(value)
                         const num = Number(value)
                         if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
-                          // Keep actual at same achievement % (using ordersTarget safely)
                           const currentAchievement = ordersTarget > 0 ? ordersActual / ordersTarget : 1
                           setOrdersTarget(newTarget)
                           setOrdersActual(newTarget * currentAchievement)
-                        } else if (value === '' || num === 0) {
-                          // Don't update if empty or zero - keep last valid value
+                        }
+                      }}
+                      onBlur={() => {
+                        // Reset to current valid value on blur if empty/invalid
+                        const num = Number(ordersTargetInput)
+                        if (isNaN(num) || num <= 0) {
+                          setOrdersTargetInput((ordersTarget / 1000000).toString())
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -251,18 +261,22 @@ export function STIPCalculator() {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
                       type="text"
-                      value={(revenueTarget / 1000000).toLocaleString()}
+                      value={revenueTargetInput}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
+                        setRevenueTargetInput(value)
                         const num = Number(value)
                         if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
-                          // Keep actual at same achievement % (using revenueTarget safely)
                           const currentAchievement = revenueTarget > 0 ? revenueActual / revenueTarget : 1
                           setRevenueTarget(newTarget)
                           setRevenueActual(newTarget * currentAchievement)
-                        } else if (value === '' || num === 0) {
-                          // Don't update if empty or zero - keep last valid value
+                        }
+                      }}
+                      onBlur={() => {
+                        const num = Number(revenueTargetInput)
+                        if (isNaN(num) || num <= 0) {
+                          setRevenueTargetInput((revenueTarget / 1000000).toString())
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -313,18 +327,22 @@ export function STIPCalculator() {
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">$</span>
                     <Input
                       type="text"
-                      value={(marginTarget / 1000000).toLocaleString()}
+                      value={marginTargetInput}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
+                        setMarginTargetInput(value)
                         const num = Number(value)
                         if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
-                          // Keep actual at same achievement % (using marginTarget safely)
                           const currentAchievement = marginTarget > 0 ? marginActual / marginTarget : 1
                           setMarginTarget(newTarget)
                           setMarginActual(newTarget * currentAchievement)
-                        } else if (value === '' || num === 0) {
-                          // Don't update if empty or zero - keep last valid value
+                        }
+                      }}
+                      onBlur={() => {
+                        const num = Number(marginTargetInput)
+                        if (isNaN(num) || num <= 0) {
+                          setMarginTargetInput((marginTarget / 1000000).toString())
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
