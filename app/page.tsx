@@ -10,8 +10,11 @@ export default function STIPCalculatorPage() {
             STIP Calculator
           </h1>
           <p className="mt-2 text-balance text-muted-foreground">
-            Explore how your short-term incentive payout is calculated. Adjust the sliders to see how 
+            Explore how your short-term incentive plan (STIP) is calculated. Adjust the sliders to see how 
             team performance and your personal rating affect your bonus.
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground/80">
+            For salaried employees only.
           </p>
         </header>
 
