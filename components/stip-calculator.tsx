@@ -442,7 +442,7 @@ export function STIPCalculator() {
               {/* Relative rating explanation */}
               <div className="rounded-lg bg-secondary/50 border border-secondary p-4">
                 <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Note:</span> Your performance rating is relative - you are rated against your peers in the smallest organizational unit with at least 20 employees.
+                  <span className="font-medium text-foreground">Forced Curve:</span> Ratings are relative to your peers in the smallest organizational unit with at least 20 employees. The distribution is forced: approximately 5% receive a 1, 10% a 2, 70% a 3, 10% a 4, and 5% a 5.
                 </p>
               </div>
 
