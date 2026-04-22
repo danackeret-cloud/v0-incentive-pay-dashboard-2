@@ -178,7 +178,7 @@ export function STIPCalculator() {
       {/* Two-column layout: Team Financials & Personal Rating */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Team Financial Performance */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Team Financial Performance</CardTitle>
             <CardDescription>
@@ -191,7 +191,7 @@ export function STIPCalculator() {
               </p>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="flex-1 flex flex-col space-y-6">
             {/* Orders */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -394,7 +394,7 @@ export function STIPCalculator() {
             </div>
 
             {/* Weighted Result */}
-            <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
+            <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Team Financials Payout</p>
@@ -409,15 +409,15 @@ export function STIPCalculator() {
         </Card>
 
         {/* Personal Rating */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
               Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned in a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. This rating is a multiplier on your team financial payout.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
+          <CardContent className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col space-y-6">
               {/* Rating buttons - 1 to 5 left to right */}
               <div className="grid grid-cols-5 gap-2">
                 {ratingScale.map((rating) => (
@@ -458,7 +458,7 @@ export function STIPCalculator() {
               </div>
 
               {/* Selected rating highlight */}
-              <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
+              <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Your Rating Multiplier</p>
