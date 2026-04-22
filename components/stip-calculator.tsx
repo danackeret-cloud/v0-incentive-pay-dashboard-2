@@ -424,15 +424,15 @@ export function STIPCalculator() {
                   <button
                     key={rating.score}
                     onClick={() => setPersonalRating(rating)}
-                    className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-center min-h-[100px] ${
+                    className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-between min-h-[100px] ${
                       personalRating.score === rating.score
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border hover:border-primary/50"
                     }`}
                   >
                     <span className="text-2xl font-bold">{rating.score}</span>
-                    <span className="text-[9px] leading-tight mt-1 text-center break-words hyphens-auto">{rating.label}</span>
-                    <span className="mt-1 text-sm font-medium opacity-80">
+                    <span className="text-[9px] leading-tight text-center break-words hyphens-auto flex-1 flex items-center">{rating.label}</span>
+                    <span className="text-sm font-medium opacity-80">
                       {rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`}
                     </span>
                   </button>
