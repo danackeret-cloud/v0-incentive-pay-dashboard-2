@@ -12,8 +12,8 @@ interface PayoutScaleVisualProps {
 export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetBonus }: PayoutScaleVisualProps) {
   // Chart dimensions and margins
   const width = 500
-  const height = 320
-  const margin = { top: 30, right: 40, bottom: 60, left: 110 }
+  const height = 220
+  const margin = { top: 20, right: 40, bottom: 45, left: 110 }
   const chartWidth = width - margin.left - margin.right
   const chartHeight = height - margin.top - margin.bottom
 
@@ -290,7 +290,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
         </div>
 
         {/* Legend */}
-        <div className="mt-4 rounded-lg bg-muted/50 p-4">
+        <div className="mt-3 rounded-lg bg-muted/50 p-3">
           <div className="flex flex-col gap-2 text-sm">
             <p className="text-muted-foreground">
               <span className="font-medium text-foreground">Formula:</span> Target Bonus x Team Financial % x Personal Rating % = Final Payout
