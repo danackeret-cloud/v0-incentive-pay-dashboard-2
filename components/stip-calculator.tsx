@@ -195,12 +195,14 @@ export function STIPCalculator() {
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
                         const num = Number(value)
-                        if (!isNaN(num)) {
+                        if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
+                          // Keep actual at same achievement % (using ordersTarget safely)
+                          const currentAchievement = ordersTarget > 0 ? ordersActual / ordersTarget : 1
                           setOrdersTarget(newTarget)
-                          // Keep actual at same achievement %
-                          const currentAchievement = ordersActual / ordersTarget
                           setOrdersActual(newTarget * currentAchievement)
+                        } else if (value === '' || num === 0) {
+                          // Don't update if empty or zero - keep last valid value
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -253,11 +255,14 @@ export function STIPCalculator() {
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
                         const num = Number(value)
-                        if (!isNaN(num)) {
+                        if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
+                          // Keep actual at same achievement % (using revenueTarget safely)
+                          const currentAchievement = revenueTarget > 0 ? revenueActual / revenueTarget : 1
                           setRevenueTarget(newTarget)
-                          const currentAchievement = revenueActual / revenueTarget
                           setRevenueActual(newTarget * currentAchievement)
+                        } else if (value === '' || num === 0) {
+                          // Don't update if empty or zero - keep last valid value
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
@@ -312,11 +317,14 @@ export function STIPCalculator() {
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '')
                         const num = Number(value)
-                        if (!isNaN(num)) {
+                        if (!isNaN(num) && num > 0) {
                           const newTarget = num * 1000000
+                          // Keep actual at same achievement % (using marginTarget safely)
+                          const currentAchievement = marginTarget > 0 ? marginActual / marginTarget : 1
                           setMarginTarget(newTarget)
-                          const currentAchievement = marginActual / marginTarget
                           setMarginActual(newTarget * currentAchievement)
+                        } else if (value === '' || num === 0) {
+                          // Don't update if empty or zero - keep last valid value
                         }
                       }}
                       className="h-8 pl-5 pr-7 text-sm"
