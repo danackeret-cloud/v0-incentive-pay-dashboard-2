@@ -413,7 +413,7 @@ export function STIPCalculator() {
           <CardHeader>
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
-              Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned in a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. This rating is a multiplier on your team financial payout.
+              Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned on a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. Your rating is a multiplier on your team financials payout.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
