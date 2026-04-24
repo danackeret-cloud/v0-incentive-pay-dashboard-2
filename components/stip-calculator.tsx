@@ -410,11 +410,16 @@ export function STIPCalculator() {
 
         {/* Personal Rating */}
         <Card className="flex flex-col">
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
-              Managers divide a fixed bonus pool among their team based on individual performance. Higher performers receive a larger % of salary; lower performers receive less. Percentages below are typical and can vary ~10%.
+              Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities and Individual/Team Goals. Higher performers receive a larger % of salary; lower performers receive less.
             </CardDescription>
+            <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
+              <p className="text-xs text-amber-700 dark:text-amber-400">
+                Percentages below are estimates and can vary by approximately +/-10% based on how your manager allocates the pool.
+              </p>
+            </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col space-y-6">
