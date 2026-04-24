@@ -471,18 +471,13 @@ export function STIPCalculator() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Estimated Rating Multiplier</p>
-                    <p className="text-sm text-muted-foreground">{personalRating.label}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {personalRating.label} ({personalRating.multiplier > 0 ? `${(personalRating.multiplierMin * 100).toFixed(0)}%-${(personalRating.multiplierMax * 100).toFixed(0)}%` : "0%"})
+                    </p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-primary">
-                      {personalRating.multiplier === 0 ? "0%" : `~${(personalRating.multiplier * 100).toFixed(0)}%`}
-                    </span>
-                    {personalRating.multiplier > 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        Approximate range: {(personalRating.multiplierMin * 100).toFixed(0)}% - {(personalRating.multiplierMax * 100).toFixed(0)}%
-                      </p>
-                    )}
-                  </div>
+                  <span className="text-2xl font-bold text-primary">
+                    {personalRating.multiplier === 0 ? "0%" : `~${(personalRating.multiplier * 100).toFixed(0)}%`}
+                  </span>
                 </div>
               </div>
             </div>
