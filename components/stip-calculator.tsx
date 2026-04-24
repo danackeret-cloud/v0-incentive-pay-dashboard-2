@@ -161,7 +161,7 @@ export function STIPCalculator() {
           </div>
           <div className="mt-3 rounded-lg bg-secondary/50 border border-secondary p-3">
             <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">Note:</span> Organization type only affects the third financial metric. 
+              <span className="font-semibold text-foreground">Note: </span>Organization type only affects the third financial metric. 
               Segment/Product Lines are measured on <span className="font-medium">Adj. Gross Margin</span>, while 
               Corporate Functions are measured on <span className="font-medium">Adj. EBITDA</span>.
             </p>
@@ -186,7 +186,7 @@ export function STIPCalculator() {
             </CardDescription>
             <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
               <p className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">Note:</span> The targets shown below are defaults for demonstration purposes. 
+                <span className="font-semibold text-foreground">Note: </span>The targets shown below are defaults for demonstration purposes. 
                 Your manager will provide your team&apos;s actual financial targets.
               </p>
             </div>
@@ -417,7 +417,7 @@ export function STIPCalculator() {
             </CardDescription>
             <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
               <p className="text-xs text-amber-700 dark:text-amber-400">
-                <span className="font-semibold">Note:</span> Percentages below are estimates and can vary by approximately +/-10% based on how your manager allocates the pool.
+                <span className="font-semibold">Note: </span>Percentages below are estimates and can vary by approximately +/-10% based on how your manager allocates the pool.
               </p>
             </div>
           </CardHeader>
