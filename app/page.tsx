@@ -19,8 +19,8 @@ export default function STIPCalculatorPage() {
         </header>
 
         {/* Discretionary Disclaimer */}
-        <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-50 dark:bg-amber-950/20 p-4">
-          <p className="text-sm text-amber-800 dark:text-amber-200">
+        <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+          <p className="text-sm text-amber-700 dark:text-amber-400">
             <span className="font-semibold">Important:</span> This calculator is for informational purposes only. 
             Actual STIP payouts are not guaranteed and remain at the sole discretion of management. 
             All bonus payments are subject to approval and may be adjusted or withheld based on company performance and other factors.

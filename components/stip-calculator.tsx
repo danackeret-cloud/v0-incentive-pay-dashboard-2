@@ -161,7 +161,7 @@ export function STIPCalculator() {
           </div>
           <div className="mt-3 rounded-lg bg-secondary/50 border border-secondary p-3">
             <p className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">Note:</span> Organization type only affects the third financial metric. 
+              <span className="font-semibold text-foreground">Note: </span>Organization type only affects the third financial metric. 
               Segment/Product Lines are measured on <span className="font-medium">Adj. Gross Margin</span>, while 
               Corporate Functions are measured on <span className="font-medium">Adj. EBITDA</span>.
             </p>
@@ -186,7 +186,7 @@ export function STIPCalculator() {
             </CardDescription>
             <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
               <p className="text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Note:</span> The targets shown below are defaults for demonstration purposes. 
+                <span className="font-semibold text-foreground">Note: </span>The targets shown below are defaults for demonstration purposes. 
                 Your manager will provide your team&apos;s actual financial targets.
               </p>
             </div>
@@ -413,11 +413,11 @@ export function STIPCalculator() {
           <CardHeader>
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
-              Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned on a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. Your rating is a multiplier on your team financials payout.
+              Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities and Individual/Team Goals. Higher performers receive a larger % of salary; lower performers receive less.
             </CardDescription>
-            <div className="mt-2 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
+            <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
               <p className="text-xs text-amber-700 dark:text-amber-400">
-                <span className="font-semibold">How it works:</span> Managers divide a fixed bonus pool among their team. High performers receive a larger percentage of their salary, while lower performers receive less. The percentages shown are typical ranges and can vary by approximately +/- 10% based on how your manager allocates the pool.
+                <span className="font-semibold">Note: </span>Percentages below are estimates and can vary by approximately +/-10% based on how your manager allocates the pool.
               </p>
             </div>
           </CardHeader>
@@ -444,9 +444,9 @@ export function STIPCalculator() {
                 ))}
               </div>
 
-              {/* Rating scale explanation */}
+              {/* Rating scale table */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-3 text-sm font-medium">Rating Scale <span className="font-normal text-muted-foreground">(typical ranges)</span></p>
+                <p className="mb-3 text-sm font-medium">Rating Scale</p>
                 <div className="space-y-2">
                   {ratingScale.map((rating) => (
                     <div 
@@ -471,18 +471,13 @@ export function STIPCalculator() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Estimated Rating Multiplier</p>
-                    <p className="text-sm text-muted-foreground">{personalRating.label}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {personalRating.label} ({personalRating.multiplier > 0 ? `${(personalRating.multiplierMin * 100).toFixed(0)}%-${(personalRating.multiplierMax * 100).toFixed(0)}%` : "0%"})
+                    </p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-bold text-primary">
-                      {personalRating.multiplier === 0 ? "0%" : `~${(personalRating.multiplier * 100).toFixed(0)}%`}
-                    </span>
-                    {personalRating.multiplier > 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        Range: {(personalRating.multiplierMin * 100).toFixed(0)}% - {(personalRating.multiplierMax * 100).toFixed(0)}%
-                      </p>
-                    )}
-                  </div>
+                  <span className="text-2xl font-bold text-primary">
+                    {personalRating.multiplier === 0 ? "0%" : `~${(personalRating.multiplier * 100).toFixed(0)}%`}
+                  </span>
                 </div>
               </div>
             </div>

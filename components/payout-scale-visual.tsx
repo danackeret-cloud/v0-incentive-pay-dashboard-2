@@ -9,7 +9,11 @@ interface PayoutScaleVisualProps {
   targetBonus: number // Target bonus amount in dollars
 }
 
-export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetBonus }: PayoutScaleVisualProps) {
+export function PayoutScaleVisual({ 
+  teamFinancialPayout, 
+  personalRating, 
+  targetBonus
+}: PayoutScaleVisualProps) {
   // Chart dimensions and margins
   const width = 500
   const height = 250
@@ -32,32 +36,10 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
 
   // Calculate final payout for display
   const currentRating = ratingScale.find(r => r.score === personalRating)
-  const finalPayoutPercent = (teamFinancialPayout / 100) * (currentRating?.multiplier || 1) * 100
   const finalPayoutDollars = (targetBonus * teamFinancialPayout / 100) * (currentRating?.multiplier || 1)
 
   // Key X-axis points for Team Financial Payout
   const xTicks = [0, 40, 100, 150]
-
-  // Payout curve points (showing the cliff structure)
-  // This shows payout % at different achievement levels mapped to x-axis position
-  const curvePoints = [
-    { achievement: 0, payout: 0 },
-    { achievement: 80, payout: 0 },    // Below 80% = 0%
-    { achievement: 80, payout: 40 },   // At 80% jumps to 40%
-    { achievement: 100, payout: 100 }, // 100% = 100%
-    { achievement: 125, payout: 150 }, // 125% = 150% (max)
-    { achievement: 150, payout: 150 }, // Stays at 150%
-  ]
-
-  // Create SVG path for the curve
-  const pathD = curvePoints
-    .map((point, i) => {
-      const x = xScale(point.payout) // X is payout %
-      // Map to middle of chart for the curve visualization
-      const curveY = margin.top + chartHeight / 2 - (point.payout / 150) * (chartHeight / 3)
-      return i === 0 ? `M ${x} ${curveY}` : `L ${x} ${curveY}`
-    })
-    .join(" ")
 
   return (
     <Card>
@@ -70,7 +52,11 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
       <CardContent>
         {/* SVG Chart */}
         <div className="relative w-full overflow-x-auto">
-          <svg viewBox={`0 0 ${width} ${height}`} className="w-full min-w-[400px]" preserveAspectRatio="xMidYMid meet">
+          <svg 
+            viewBox={`0 0 ${width} ${height}`} 
+            className="w-full min-w-[400px]"
+            preserveAspectRatio="xMidYMid meet"
+          >
             
             {/* Grid lines - vertical (X-axis ticks) */}
             {xTicks.map((payout) => (
@@ -278,23 +264,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
           </svg>
         </div>
 
-        {/* Legend */}
-        <div className="mt-3 rounded-lg bg-muted/50 p-3">
-          <div className="flex flex-col gap-2 text-sm">
-            <p className="text-muted-foreground">
-              <span className="font-medium text-foreground">Formula:</span> Target Bonus x Team Financial % x Personal Rating % = Final Payout
-            </p>
-            <p className="text-muted-foreground">
-              <span className="font-medium text-foreground">Your Calculation:</span>{" "}
-              {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(0)}% x ~{((currentRating?.multiplier || 1) * 100).toFixed(0)}% = {" "}
-              <span className="font-bold text-primary">~{formatCurrency(finalPayoutDollars)}</span>
-              {" "}(~{finalPayoutPercent.toFixed(0)}% of target)
-            </p>
-            <p className="text-xs text-muted-foreground/80 italic">
-              Note: This is an estimate. Actual payout depends on how your manager allocates the team&apos;s fixed bonus pool.
-            </p>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   )
