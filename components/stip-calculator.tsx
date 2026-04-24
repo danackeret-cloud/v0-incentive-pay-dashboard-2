@@ -479,7 +479,7 @@ export function STIPCalculator() {
                     </span>
                     {personalRating.multiplier > 0 && (
                       <p className="text-xs text-muted-foreground">
-                        Range: {(personalRating.multiplierMin * 100).toFixed(0)}% - {(personalRating.multiplierMax * 100).toFixed(0)}%
+                        Approximate range: {(personalRating.multiplierMin * 100).toFixed(0)}% - {(personalRating.multiplierMax * 100).toFixed(0)}%
                       </p>
                     )}
                   </div>
