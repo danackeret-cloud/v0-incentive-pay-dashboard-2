@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ratingScale, formatCurrency } from "@/lib/stip-calculator"
 
@@ -8,18 +7,13 @@ interface PayoutScaleVisualProps {
   teamFinancialPayout: number // The weighted payout percentage (0-150)
   personalRating: number // The rating score (1-5)
   targetBonus: number // Target bonus amount in dollars
-  onPersonalRatingChange?: (rating: typeof ratingScale[number]) => void
 }
 
 export function PayoutScaleVisual({ 
   teamFinancialPayout, 
   personalRating, 
-  targetBonus,
-  onPersonalRatingChange
+  targetBonus
 }: PayoutScaleVisualProps) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  
   // Chart dimensions and margins
   const width = 500
   const height = 250
@@ -34,10 +28,6 @@ export function PayoutScaleVisual({
   const ratings = [...ratingScale].reverse() // 5 at top, 1 at bottom
   const yStep = chartHeight / (ratings.length - 1)
   const yScale = (ratingIndex: number) => margin.top + ratingIndex * yStep
-  const yScaleInverse = (y: number) => {
-    const index = Math.round((y - margin.top) / yStep)
-    return Math.max(0, Math.min(ratings.length - 1, index))
-  }
 
   // Find current position
   const currentRatingIndex = ratings.findIndex(r => r.score === personalRating)
@@ -51,67 +41,6 @@ export function PayoutScaleVisual({
   // Key X-axis points for Team Financial Payout
   const xTicks = [0, 40, 100, 150]
 
-  // Get SVG coordinates from mouse/touch event
-  const getSVGCoords = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!svgRef.current) return null
-    const svg = svgRef.current
-    const rect = svg.getBoundingClientRect()
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
-    
-    // Convert to SVG coordinates
-    const scaleX = width / rect.width
-    const scaleY = height / rect.height
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    }
-  }, [width, height])
-
-  // Handle drag - only updates personal rating (y-axis)
-  const handleDrag = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isDragging) return
-    const coords = getSVGCoords(e)
-    if (!coords) return
-
-    // Update rating (y-axis only - team financial comes from sliders)
-    const ratingIndex = yScaleInverse(coords.y)
-    const newRating = ratings[ratingIndex]
-    if (onPersonalRatingChange && newRating && newRating.score !== personalRating) {
-      onPersonalRatingChange(newRating)
-    }
-  }, [isDragging, getSVGCoords, yScaleInverse, ratings, personalRating, onPersonalRatingChange])
-
-  // Mouse/touch event handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }, [])
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
-  }, [])
-
-  // Add global listeners for drag
-  useEffect(() => {
-    if (isDragging) {
-      const handleMove = (e: MouseEvent | TouchEvent) => handleDrag(e)
-      const handleUp = () => setIsDragging(false)
-      
-      window.addEventListener('mousemove', handleMove)
-      window.addEventListener('mouseup', handleUp)
-      window.addEventListener('touchmove', handleMove)
-      window.addEventListener('touchend', handleUp)
-      
-      return () => {
-        window.removeEventListener('mousemove', handleMove)
-        window.removeEventListener('mouseup', handleUp)
-        window.removeEventListener('touchmove', handleMove)
-        window.removeEventListener('touchend', handleUp)
-      }
-    }
-  }, [isDragging, handleDrag])
-
   return (
     <Card>
       <CardHeader>
@@ -123,11 +52,9 @@ export function PayoutScaleVisual({
       <CardContent>
         {/* SVG Chart */}
         <div className="relative w-full overflow-x-auto">
-          <p className="mb-2 text-xs text-muted-foreground text-center">Drag the marker up or down to change your performance rating</p>
           <svg 
-            ref={svgRef}
             viewBox={`0 0 ${width} ${height}`} 
-            className={`w-full min-w-[400px] ${isDragging ? 'cursor-grabbing' : ''}`}
+            className="w-full min-w-[400px]"
             preserveAspectRatio="xMidYMid meet"
           >
             
@@ -281,41 +208,20 @@ export function PayoutScaleVisual({
                   className="text-primary/50"
                 />
 
-                {/* Marker circle - draggable */}
-                <g 
-                  onMouseDown={handleMouseDown}
-                  onTouchStart={() => setIsDragging(true)}
-                  className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                  style={{ touchAction: 'none' }}
-                >
-                  <circle
-                    cx={markerX}
-                    cy={markerY}
-                    r="18"
-                    fill="transparent"
-                    className="hover:fill-primary/10"
-                  />
-                  <circle
-                    cx={markerX}
-                    cy={markerY}
-                    r="14"
-                    fill="currentColor"
-                    className={`text-primary ${isDragging ? 'opacity-80' : ''}`}
-                  />
-                  <circle
-                    cx={markerX}
-                    cy={markerY}
-                    r="9"
-                    fill="white"
-                  />
-                  {/* Drag handle icon */}
-                  <g className="text-primary">
-                    <circle cx={markerX - 3} cy={markerY - 2} r="1.5" fill="currentColor" />
-                    <circle cx={markerX + 3} cy={markerY - 2} r="1.5" fill="currentColor" />
-                    <circle cx={markerX - 3} cy={markerY + 2} r="1.5" fill="currentColor" />
-                    <circle cx={markerX + 3} cy={markerY + 2} r="1.5" fill="currentColor" />
-                  </g>
-                </g>
+                {/* Marker circle */}
+                <circle
+                  cx={markerX}
+                  cy={markerY}
+                  r="14"
+                  fill="currentColor"
+                  className="text-primary"
+                />
+                <circle
+                  cx={markerX}
+                  cy={markerY}
+                  r="9"
+                  fill="white"
+                />
                 
                 {/* Final payout label - smart positioning to avoid cutoff */}
                 {(() => {

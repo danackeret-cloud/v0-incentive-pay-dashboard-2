@@ -410,16 +410,11 @@ export function STIPCalculator() {
 
         {/* Personal Rating */}
         <Card className="flex flex-col">
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle>Personal Performance Rating</CardTitle>
             <CardDescription>
-              Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned on a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. Your rating is a multiplier on your team financials payout.
+              Managers divide a fixed bonus pool among their team based on individual performance. Higher performers receive a larger % of salary; lower performers receive less. Percentages below are typical and can vary ~10%.
             </CardDescription>
-            <div className="mt-2 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
-              <p className="text-xs text-amber-700 dark:text-amber-400">
-                <span className="font-semibold">How it works:</span> Managers divide a fixed bonus pool among their team. High performers receive a larger percentage of their salary, while lower performers receive less. The percentages shown are typical ranges and can vary by approximately +/- 10% based on how your manager allocates the pool.
-              </p>
-            </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col space-y-6">
@@ -495,7 +490,6 @@ export function STIPCalculator() {
         teamFinancialPayout={teamFinancials.weightedPayout} 
         personalRating={personalRating.score}
         targetBonus={finalResults.targetBonus}
-        onPersonalRatingChange={setPersonalRating}
       />
 
       {/* Results */}
