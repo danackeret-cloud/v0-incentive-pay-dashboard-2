@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useRef, useCallback, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ratingScale, formatCurrency } from "@/lib/stip-calculator"
 
@@ -7,9 +8,18 @@ interface PayoutScaleVisualProps {
   teamFinancialPayout: number // The weighted payout percentage (0-150)
   personalRating: number // The rating score (1-5)
   targetBonus: number // Target bonus amount in dollars
+  onPersonalRatingChange?: (rating: typeof ratingScale[number]) => void
 }
 
-export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetBonus }: PayoutScaleVisualProps) {
+export function PayoutScaleVisual({ 
+  teamFinancialPayout, 
+  personalRating, 
+  targetBonus,
+  onPersonalRatingChange
+}: PayoutScaleVisualProps) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  
   // Chart dimensions and margins
   const width = 500
   const height = 250
@@ -24,6 +34,10 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
   const ratings = [...ratingScale].reverse() // 5 at top, 1 at bottom
   const yStep = chartHeight / (ratings.length - 1)
   const yScale = (ratingIndex: number) => margin.top + ratingIndex * yStep
+  const yScaleInverse = (y: number) => {
+    const index = Math.round((y - margin.top) / yStep)
+    return Math.max(0, Math.min(ratings.length - 1, index))
+  }
 
   // Find current position
   const currentRatingIndex = ratings.findIndex(r => r.score === personalRating)
@@ -32,32 +46,71 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
 
   // Calculate final payout for display
   const currentRating = ratingScale.find(r => r.score === personalRating)
-  const finalPayoutPercent = (teamFinancialPayout / 100) * (currentRating?.multiplier || 1) * 100
   const finalPayoutDollars = (targetBonus * teamFinancialPayout / 100) * (currentRating?.multiplier || 1)
 
   // Key X-axis points for Team Financial Payout
   const xTicks = [0, 40, 100, 150]
 
-  // Payout curve points (showing the cliff structure)
-  // This shows payout % at different achievement levels mapped to x-axis position
-  const curvePoints = [
-    { achievement: 0, payout: 0 },
-    { achievement: 80, payout: 0 },    // Below 80% = 0%
-    { achievement: 80, payout: 40 },   // At 80% jumps to 40%
-    { achievement: 100, payout: 100 }, // 100% = 100%
-    { achievement: 125, payout: 150 }, // 125% = 150% (max)
-    { achievement: 150, payout: 150 }, // Stays at 150%
-  ]
+  // Get SVG coordinates from mouse/touch event
+  const getSVGCoords = useCallback((e: MouseEvent | TouchEvent) => {
+    if (!svgRef.current) return null
+    const svg = svgRef.current
+    const rect = svg.getBoundingClientRect()
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    
+    // Convert to SVG coordinates
+    const scaleX = width / rect.width
+    const scaleY = height / rect.height
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    }
+  }, [width, height])
 
-  // Create SVG path for the curve
-  const pathD = curvePoints
-    .map((point, i) => {
-      const x = xScale(point.payout) // X is payout %
-      // Map to middle of chart for the curve visualization
-      const curveY = margin.top + chartHeight / 2 - (point.payout / 150) * (chartHeight / 3)
-      return i === 0 ? `M ${x} ${curveY}` : `L ${x} ${curveY}`
-    })
-    .join(" ")
+  // Handle drag - only updates personal rating (y-axis)
+  const handleDrag = useCallback((e: MouseEvent | TouchEvent) => {
+    if (!isDragging) return
+    const coords = getSVGCoords(e)
+    if (!coords) return
+
+    // Update rating (y-axis only - team financial comes from sliders)
+    const ratingIndex = yScaleInverse(coords.y)
+    const newRating = ratings[ratingIndex]
+    if (onPersonalRatingChange && newRating && newRating.score !== personalRating) {
+      onPersonalRatingChange(newRating)
+    }
+  }, [isDragging, getSVGCoords, yScaleInverse, ratings, personalRating, onPersonalRatingChange])
+
+  // Mouse/touch event handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
+  // Add global listeners for drag
+  useEffect(() => {
+    if (isDragging) {
+      const handleMove = (e: MouseEvent | TouchEvent) => handleDrag(e)
+      const handleUp = () => setIsDragging(false)
+      
+      window.addEventListener('mousemove', handleMove)
+      window.addEventListener('mouseup', handleUp)
+      window.addEventListener('touchmove', handleMove)
+      window.addEventListener('touchend', handleUp)
+      
+      return () => {
+        window.removeEventListener('mousemove', handleMove)
+        window.removeEventListener('mouseup', handleUp)
+        window.removeEventListener('touchmove', handleMove)
+        window.removeEventListener('touchend', handleUp)
+      }
+    }
+  }, [isDragging, handleDrag])
 
   return (
     <Card>
@@ -70,7 +123,13 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
       <CardContent>
         {/* SVG Chart */}
         <div className="relative w-full overflow-x-auto">
-          <svg viewBox={`0 0 ${width} ${height}`} className="w-full min-w-[400px]" preserveAspectRatio="xMidYMid meet">
+          <p className="mb-2 text-xs text-muted-foreground text-center">Drag the marker up or down to change your performance rating</p>
+          <svg 
+            ref={svgRef}
+            viewBox={`0 0 ${width} ${height}`} 
+            className={`w-full min-w-[400px] ${isDragging ? 'cursor-grabbing' : ''}`}
+            preserveAspectRatio="xMidYMid meet"
+          >
             
             {/* Grid lines - vertical (X-axis ticks) */}
             {xTicks.map((payout) => (
@@ -222,20 +281,41 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
                   className="text-primary/50"
                 />
 
-                {/* Marker circle */}
-                <circle
-                  cx={markerX}
-                  cy={markerY}
-                  r="14"
-                  fill="currentColor"
-                  className="text-primary"
-                />
-                <circle
-                  cx={markerX}
-                  cy={markerY}
-                  r="9"
-                  fill="white"
-                />
+                {/* Marker circle - draggable */}
+                <g 
+                  onMouseDown={handleMouseDown}
+                  onTouchStart={() => setIsDragging(true)}
+                  className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                  style={{ touchAction: 'none' }}
+                >
+                  <circle
+                    cx={markerX}
+                    cy={markerY}
+                    r="18"
+                    fill="transparent"
+                    className="hover:fill-primary/10"
+                  />
+                  <circle
+                    cx={markerX}
+                    cy={markerY}
+                    r="14"
+                    fill="currentColor"
+                    className={`text-primary ${isDragging ? 'opacity-80' : ''}`}
+                  />
+                  <circle
+                    cx={markerX}
+                    cy={markerY}
+                    r="9"
+                    fill="white"
+                  />
+                  {/* Drag handle icon */}
+                  <g className="text-primary">
+                    <circle cx={markerX - 3} cy={markerY - 2} r="1.5" fill="currentColor" />
+                    <circle cx={markerX + 3} cy={markerY - 2} r="1.5" fill="currentColor" />
+                    <circle cx={markerX - 3} cy={markerY + 2} r="1.5" fill="currentColor" />
+                    <circle cx={markerX + 3} cy={markerY + 2} r="1.5" fill="currentColor" />
+                  </g>
+                </g>
                 
                 {/* Final payout label - smart positioning to avoid cutoff */}
                 {(() => {
@@ -278,23 +358,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
           </svg>
         </div>
 
-        {/* Legend */}
-        <div className="mt-3 rounded-lg bg-muted/50 p-3">
-          <div className="flex flex-col gap-2 text-sm">
-            <p className="text-muted-foreground">
-              <span className="font-medium text-foreground">Formula:</span> Target Bonus x Team Financial % x Personal Rating % = Final Payout
-            </p>
-            <p className="text-muted-foreground">
-              <span className="font-medium text-foreground">Your Calculation:</span>{" "}
-              {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(0)}% x ~{((currentRating?.multiplier || 1) * 100).toFixed(0)}% = {" "}
-              <span className="font-bold text-primary">~{formatCurrency(finalPayoutDollars)}</span>
-              {" "}(~{finalPayoutPercent.toFixed(0)}% of target)
-            </p>
-            <p className="text-xs text-muted-foreground/80 italic">
-              Note: This is an estimate. Actual payout depends on how your manager allocates the team&apos;s fixed bonus pool.
-            </p>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   )

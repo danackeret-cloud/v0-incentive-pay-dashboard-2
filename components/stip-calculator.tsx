@@ -495,6 +495,7 @@ export function STIPCalculator() {
         teamFinancialPayout={teamFinancials.weightedPayout} 
         personalRating={personalRating.score}
         targetBonus={finalResults.targetBonus}
+        onPersonalRatingChange={setPersonalRating}
       />
 
       {/* Results */}
