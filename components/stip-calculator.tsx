@@ -444,6 +444,28 @@ export function STIPCalculator() {
                 ))}
               </div>
 
+              {/* Rating scale table */}
+              <div className="rounded-lg bg-muted/50 p-4">
+                <p className="mb-3 text-sm font-medium">Rating Scale</p>
+                <div className="space-y-2">
+                  {ratingScale.map((rating) => (
+                    <div 
+                      key={rating.score}
+                      className={`flex items-center justify-between text-sm ${
+                        personalRating.score === rating.score ? "font-medium text-primary" : "text-muted-foreground"
+                      }`}
+                    >
+                      <span>{rating.score} - {rating.label}</span>
+                      <span>
+                        {rating.multiplier === 0 
+                          ? "0%" 
+                          : `${(rating.multiplierMin * 100).toFixed(0)}% - ${(rating.multiplierMax * 100).toFixed(0)}%`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Selected rating highlight */}
               <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
