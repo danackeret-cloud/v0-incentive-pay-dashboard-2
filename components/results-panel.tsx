@@ -56,7 +56,7 @@ export function ResultsPanel({
         {/* Estimate disclaimer */}
         <div className="mt-4 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
           <p className="text-xs text-amber-700 dark:text-amber-400">
-            <span className="font-semibold">This is an estimate.</span> Your actual payout may vary based on how your manager allocates the team&apos;s fixed bonus pool. Higher performers typically receive a larger percentage of their salary, while lower performers receive less.
+            <span className="font-semibold">Note:</span> This is an estimate. Your actual payout may vary based on how your manager allocates the team&apos;s fixed bonus pool.
           </p>
         </div>
 
