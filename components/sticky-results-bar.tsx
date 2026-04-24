@@ -46,7 +46,7 @@ export function StickyResultsBar({
             {/* Performance Rating */}
             <div className="text-center">
               <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Performance Rating</p>
-              <p className="text-sm font-semibold text-accent">{(personalMultiplier * 100).toFixed(0)}%</p>
+              <p className="text-sm font-semibold text-accent">~{(personalMultiplier * 100).toFixed(0)}%</p>
             </div>
             
             <span className="text-muted-foreground text-lg">=</span>
@@ -88,14 +88,14 @@ export function StickyResultsBar({
                   ? "text-destructive" 
                   : "text-primary-foreground/70"
               }`}>
-                Final STIP Payout
+                Est. STIP Payout
               </p>
               <p className={`text-xl font-bold ${
                 isZeroPayout 
                   ? "text-destructive" 
                   : "text-primary-foreground"
               }`}>
-                {formatCurrency(finalPayoutAmount)}
+                ~{formatCurrency(finalPayoutAmount)}
               </p>
             </div>
           </div>

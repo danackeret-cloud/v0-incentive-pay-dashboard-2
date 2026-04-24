@@ -4,16 +4,19 @@ export interface PerformanceRating {
   score: 1 | 2 | 3 | 4 | 5
   label: string
   multiplier: number
+  multiplierMin: number // Lower end of range (-10%)
+  multiplierMax: number // Upper end of range (+10%)
 }
 
 // Performance rating scale - ordered 1 to 5 for left-to-right display
-// Payout percentages: 0%, 75%, 100%, 125%, 150%
+// Base payout percentages: 0%, 75%, 100%, 125%, 150%
+// Actual payouts can vary +/- 10% based on manager's bonus pool allocation
 export const ratingScale: PerformanceRating[] = [
-  { score: 1, label: "Needs Improvement", multiplier: 0 },
-  { score: 2, label: "Progressing", multiplier: 0.75 },
-  { score: 3, label: "Effective", multiplier: 1.0 },
-  { score: 4, label: "Excellent", multiplier: 1.25 },
-  { score: 5, label: "Outstanding", multiplier: 1.5 },
+  { score: 1, label: "Needs Improvement", multiplier: 0, multiplierMin: 0, multiplierMax: 0 },
+  { score: 2, label: "Progressing", multiplier: 0.75, multiplierMin: 0.65, multiplierMax: 0.85 },
+  { score: 3, label: "Effective", multiplier: 1.0, multiplierMin: 0.90, multiplierMax: 1.10 },
+  { score: 4, label: "Excellent", multiplier: 1.25, multiplierMin: 1.15, multiplierMax: 1.35 },
+  { score: 5, label: "Outstanding", multiplier: 1.5, multiplierMin: 1.40, multiplierMax: 1.60 },
 ]
 
 // Default financial targets

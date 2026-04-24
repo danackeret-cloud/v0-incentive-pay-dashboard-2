@@ -415,6 +415,11 @@ export function STIPCalculator() {
             <CardDescription>
               Your manager assigns a rating based on your performance against AV Priorities and Individual/Team Goals. The rating is assigned on a &quot;forced curve&quot; meaning that in addition to your performance against your goals, you are also graded against your peers. Your rating is a multiplier on your team financials payout.
             </CardDescription>
+            <div className="mt-2 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
+              <p className="text-xs text-amber-700 dark:text-amber-400">
+                <span className="font-semibold">How it works:</span> Managers divide a fixed bonus pool among their team. High performers receive a larger percentage of their salary, while lower performers receive less. The percentages shown are typical ranges and can vary by approximately +/- 10% based on how your manager allocates the pool.
+              </p>
+            </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col space-y-6">
@@ -432,8 +437,8 @@ export function STIPCalculator() {
                   >
                     <span className="text-2xl font-bold">{rating.score}</span>
                     <span className="text-[9px] leading-tight text-center break-words hyphens-auto flex-1 flex items-center">{rating.label}</span>
-                    <span className="text-sm font-medium opacity-80">
-                      {rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`}
+                    <span className="text-[10px] font-medium opacity-80">
+                      {rating.multiplier === 0 ? "0%" : `~${(rating.multiplier * 100).toFixed(0)}%`}
                     </span>
                   </button>
                 ))}
@@ -441,7 +446,7 @@ export function STIPCalculator() {
 
               {/* Rating scale explanation */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-3 text-sm font-medium">Rating Scale</p>
+                <p className="mb-3 text-sm font-medium">Rating Scale <span className="font-normal text-muted-foreground">(typical ranges)</span></p>
                 <div className="space-y-2">
                   {ratingScale.map((rating) => (
                     <div 
@@ -451,7 +456,11 @@ export function STIPCalculator() {
                       }`}
                     >
                       <span>{rating.score} - {rating.label}</span>
-                      <span>{rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`}</span>
+                      <span>
+                        {rating.multiplier === 0 
+                          ? "0%" 
+                          : `${(rating.multiplierMin * 100).toFixed(0)}% - ${(rating.multiplierMax * 100).toFixed(0)}%`}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -461,12 +470,19 @@ export function STIPCalculator() {
               <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Your Rating Multiplier</p>
+                    <p className="font-medium">Estimated Rating Multiplier</p>
                     <p className="text-sm text-muted-foreground">{personalRating.label}</p>
                   </div>
-                  <span className="text-2xl font-bold text-primary">
-                    {personalRating.multiplier === 0 ? "0%" : `${(personalRating.multiplier * 100).toFixed(0)}%`}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-2xl font-bold text-primary">
+                      {personalRating.multiplier === 0 ? "0%" : `~${(personalRating.multiplier * 100).toFixed(0)}%`}
+                    </span>
+                    {personalRating.multiplier > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        Range: {(personalRating.multiplierMin * 100).toFixed(0)}% - {(personalRating.multiplierMax * 100).toFixed(0)}%
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
