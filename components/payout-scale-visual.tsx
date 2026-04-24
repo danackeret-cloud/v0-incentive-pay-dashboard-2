@@ -184,7 +184,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
               </text>
             ))}
 
-            {/* Y-axis tick labels - Rating with multiplier on single line */}
+            {/* Y-axis tick labels - Rating with multiplier range on single line */}
             {ratings.map((rating, index) => (
               <text
                 key={`ylabel-${rating.score}`}
@@ -195,7 +195,7 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
                   rating.score === personalRating ? "fill-primary font-semibold" : "fill-muted-foreground"
                 }`}
               >
-                {rating.score} ({rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`})
+                {rating.score} (~{rating.multiplier === 0 ? "0%" : `${(rating.multiplier * 100).toFixed(0)}%`})
               </text>
             ))}
 
@@ -286,9 +286,12 @@ export function PayoutScaleVisual({ teamFinancialPayout, personalRating, targetB
             </p>
             <p className="text-muted-foreground">
               <span className="font-medium text-foreground">Your Calculation:</span>{" "}
-              {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(0)}% x {((currentRating?.multiplier || 1) * 100).toFixed(0)}% = {" "}
-              <span className="font-bold text-primary">{formatCurrency(finalPayoutDollars)}</span>
-              {" "}({finalPayoutPercent.toFixed(0)}% of target)
+              {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(0)}% x ~{((currentRating?.multiplier || 1) * 100).toFixed(0)}% = {" "}
+              <span className="font-bold text-primary">~{formatCurrency(finalPayoutDollars)}</span>
+              {" "}(~{finalPayoutPercent.toFixed(0)}% of target)
+            </p>
+            <p className="text-xs text-muted-foreground/80 italic">
+              Note: This is an estimate. Actual payout depends on how your manager allocates the team&apos;s fixed bonus pool.
             </p>
           </div>
         </div>

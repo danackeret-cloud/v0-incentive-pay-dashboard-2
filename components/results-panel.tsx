@@ -25,7 +25,7 @@ export function ResultsPanel({
   return (
     <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
       <CardHeader>
-        <CardTitle>Final STIP Payout</CardTitle>
+        <CardTitle>Estimated STIP Payout</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Formula Visualization */}
@@ -46,30 +46,37 @@ export function ResultsPanel({
           </div>
           <span className="text-2xl font-bold text-muted-foreground">=</span>
           <div className={`flex flex-col items-center rounded-lg p-4 text-center ${isZeroPayout ? "bg-destructive/10" : "bg-primary"}`}>
-            <span className={`text-sm ${isZeroPayout ? "text-destructive" : "text-primary-foreground/80"}`}>Final Payout</span>
+            <span className={`text-sm ${isZeroPayout ? "text-destructive" : "text-primary-foreground/80"}`}>Est. Payout</span>
             <span className={`text-2xl font-bold ${isZeroPayout ? "text-destructive" : "text-primary-foreground"}`}>
-              {formatCurrency(finalPayoutAmount)}
+              ~{formatCurrency(finalPayoutAmount)}
             </span>
           </div>
+        </div>
+
+        {/* Estimate disclaimer */}
+        <div className="mt-4 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            <span className="font-semibold">This is an estimate.</span> Your actual payout may vary based on how your manager allocates the team&apos;s fixed bonus pool. Higher performers typically receive a larger percentage of their salary, while lower performers receive less.
+          </p>
         </div>
 
         {/* Summary */}
         <div className="rounded-lg bg-muted/50 p-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <p className="text-sm text-muted-foreground">Payout as % of Target</p>
-              <p className="text-2xl font-bold">{finalPayoutPercent.toFixed(1)}%</p>
+              <p className="text-sm text-muted-foreground">Est. % of Target</p>
+              <p className="text-2xl font-bold">~{finalPayoutPercent.toFixed(1)}%</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Payout Amount</p>
+              <p className="text-sm text-muted-foreground">Est. Payout Amount</p>
               <p className={`text-2xl font-bold ${isZeroPayout ? "text-destructive" : "text-accent"}`}>
-                {formatCurrency(finalPayoutAmount)}
+                ~{formatCurrency(finalPayoutAmount)}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Difference from Target</p>
+              <p className="text-sm text-muted-foreground">Est. Difference from Target</p>
               <p className={`text-2xl font-bold ${finalPayoutAmount >= targetBonus ? "text-accent" : "text-destructive"}`}>
-                {finalPayoutAmount >= targetBonus ? "+" : ""}{formatCurrency(finalPayoutAmount - targetBonus)}
+                {finalPayoutAmount >= targetBonus ? "+" : ""}~{formatCurrency(Math.abs(finalPayoutAmount - targetBonus))}
               </p>
             </div>
           </div>
