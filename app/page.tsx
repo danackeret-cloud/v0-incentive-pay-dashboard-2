@@ -10,8 +10,8 @@ export default function STIPCalculatorPage() {
             STIP Calculator
           </h1>
           <p className="mt-2 text-balance text-muted-foreground">
-            Explore how your short-term incentive plan (STIP) is calculated. Adjust the sliders to see how 
-            team performance and your personal rating affect your bonus.
+            Explore how your short-term incentive plan (STIP) is calculated. Run different scenarios to see how 
+            changes in team financial performance and your personal rating affect your bonus.
           </p>
           <p className="mt-1 text-sm text-muted-foreground/80">
             For salaried employees only.
@@ -44,7 +44,7 @@ export default function STIPCalculatorPage() {
             </span>
           </div>
           <p className="mt-3 text-center text-xs text-muted-foreground">
-            Team financials are based on Orders, Revenue, and Margin (equally weighted). 
+            Team financials are based on Orders, Revenue, and Margin achievement vs. target (equally weighted). 
             Personal rating is a 1-5 scale assigned by your manager.
           </p>
         </div>

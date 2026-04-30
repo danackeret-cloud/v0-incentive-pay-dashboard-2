@@ -19,13 +19,6 @@ export const ratingScale: PerformanceRating[] = [
   { score: 5, label: "Outstanding", multiplier: 1.5, multiplierMin: 1.40, multiplierMax: 1.60 },
 ]
 
-// Default financial targets
-export const defaultTargets = {
-  orders: 100000000,    // $100M
-  revenue: 100000000,   // $100M
-  margin: 50000000,     // $50M
-}
-
 // Payout scale calculation - converts achievement % to payout %
 export function calculatePayoutPercent(achievementPercent: number): number {
   // Below 80% = 0% payout
@@ -40,12 +33,6 @@ export function calculatePayoutPercent(achievementPercent: number): number {
   }
   // Above 125% = capped at 150%
   return 150
-}
-
-// Calculate achievement percentage from actual vs target
-export function calculateAchievementPercent(actual: number, target: number): number {
-  if (target === 0) return 0
-  return (actual / target) * 100
 }
 
 // Calculate team financial performance from three metrics
@@ -101,33 +88,4 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// Format large currency (millions/billions)
-export function formatLargeCurrency(value: number): string {
-  if (value >= 1000000000) {
-    return `$${(value / 1000000000).toFixed(2)}B`
-  }
-  if (value >= 1000000) {
-    return `$${(value / 1000000).toFixed(1)}M`
-  }
-  if (value >= 1000) {
-    return `$${(value / 1000).toFixed(0)}K`
-  }
-  return formatCurrency(value)
-}
 
-// Parse currency input (handles M, K suffixes)
-export function parseCurrencyInput(value: string): number {
-  const cleaned = value.replace(/[$,\s]/g, '').toUpperCase()
-  
-  if (cleaned.endsWith('B')) {
-    return parseFloat(cleaned.slice(0, -1)) * 1000000000
-  }
-  if (cleaned.endsWith('M')) {
-    return parseFloat(cleaned.slice(0, -1)) * 1000000
-  }
-  if (cleaned.endsWith('K')) {
-    return parseFloat(cleaned.slice(0, -1)) * 1000
-  }
-  
-  return parseFloat(cleaned) || 0
-}
