@@ -322,7 +322,7 @@ export function STIPCalculator() {
             </CardDescription>
             <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
               <p className="text-xs text-amber-700 dark:text-amber-400">
-                <span className="font-semibold">Note: </span>Percentages below are estimates and can vary by approximately +/-10% based on how your manager allocates the pool.
+                <span className="font-semibold">Note: </span>Percentages below are estimates and can vary based on how your manager allocates the pool.
               </p>
             </div>
           </CardHeader>
