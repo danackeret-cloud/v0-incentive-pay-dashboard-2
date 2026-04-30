@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+
 import {
   ratingScale,
   calculatePayoutPercent,
@@ -22,7 +22,6 @@ export function STIPCalculator() {
   // Employee inputs
   const [baseSalary, setBaseSalary] = useState(125000)
   const [targetPercent, setTargetPercent] = useState(15)
-  const [orgType, setOrgType] = useState<"pl" | "function">("pl") // pl = Segment/Product Line, function = Corporate Function
 
   // Scenario inputs - achievement percentages relative to target (100% = on target)
   const [ordersScenario, setOrdersScenario] = useState(100) // % of target achieved
@@ -76,7 +75,7 @@ export function STIPCalculator() {
           <CardDescription>Enter your compensation details</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="salary">Base Salary</Label>
               <div className="relative">
@@ -125,30 +124,6 @@ export function STIPCalculator() {
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Organization Type</Label>
-              <RadioGroup
-                value={orgType}
-                onValueChange={(value) => setOrgType(value as "pl" | "function")}
-                className="flex flex-col gap-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pl" id="pl" />
-                  <Label htmlFor="pl" className="font-normal cursor-pointer">Segment / Product Line</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="function" id="function" />
-                  <Label htmlFor="function" className="font-normal cursor-pointer">Corporate Function</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          </div>
-          <div className="mt-3 rounded-lg bg-secondary/50 border border-secondary p-3">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">Note: </span>Organization type only affects the third financial metric. 
-              Segment/Product Lines are measured on <span className="font-medium">Adj. Gross Margin</span>, while 
-              Corporate Functions are measured on <span className="font-medium">Adj. EBITDA</span>.
-            </p>
           </div>
           <div className="mt-4 rounded-lg bg-muted/50 p-3">
             <p className="text-sm text-muted-foreground">
@@ -161,17 +136,17 @@ export function STIPCalculator() {
 
       {/* Two-column layout: Team Financials & Personal Rating */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Team Financial Performance Scenarios */}
+        {/* Team Financial Performance */}
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle>Team Financial Scenarios</CardTitle>
+            <CardTitle>Team Financial Performance</CardTitle>
             <CardDescription>
               Adjust the sliders to explore different financial performance scenarios. Each metric is weighted equally (33.3%).
             </CardDescription>
             <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
               <p className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">How to use: </span>
-                Move the sliders to simulate scenarios like &quot;What if revenue is 10% above target?&quot; or &quot;What if orders are 20% below target?&quot;
+                <span className="font-semibold text-foreground">Note: </span>
+                Financial targets are measured at the lowest applicable level (Corporate &gt; Segment &gt; Business Group &gt; Business Unit). Product line managers are measured on their individual product lines.
               </p>
             </div>
           </CardHeader>
@@ -256,12 +231,10 @@ export function STIPCalculator() {
               </div>
             </div>
 
-            {/* Margin/EBITDA Scenario */}
+            {/* Adj. EBITDA Scenario */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-semibold">
-                  {orgType === "pl" ? "Adj. Gross Margin" : "Adj. EBITDA"}
-                </Label>
+                <Label className="text-base font-semibold">Adj. EBITDA</Label>
                 <span className={`text-sm font-medium px-2 py-1 rounded ${
                   marginScenario >= 100 ? "bg-accent/20 text-accent" : "bg-destructive/20 text-destructive"
                 }`}>
