@@ -9,14 +9,13 @@ export interface PerformanceRating {
 }
 
 // Performance rating scale - ordered 1 to 5 for left-to-right display
-// Base payout percentages: 0%, 75%, 100%, 125%, 150%
-// Actual payouts can vary +/- 10% based on manager's bonus pool allocation
+// Payout ranges can vary based on manager's bonus pool allocation
 export const ratingScale: PerformanceRating[] = [
   { score: 1, label: "Needs Improvement", multiplier: 0, multiplierMin: 0, multiplierMax: 0 },
-  { score: 2, label: "Progressing", multiplier: 0.75, multiplierMin: 0.65, multiplierMax: 0.85 },
-  { score: 3, label: "Effective", multiplier: 1.0, multiplierMin: 0.90, multiplierMax: 1.10 },
-  { score: 4, label: "Excellent", multiplier: 1.25, multiplierMin: 1.15, multiplierMax: 1.35 },
-  { score: 5, label: "Outstanding", multiplier: 1.5, multiplierMin: 1.40, multiplierMax: 1.60 },
+  { score: 2, label: "Progressing", multiplier: 0.425, multiplierMin: 0.10, multiplierMax: 0.75 },
+  { score: 3, label: "Effective", multiplier: 0.925, multiplierMin: 0.80, multiplierMax: 1.05 },
+  { score: 4, label: "Excellent", multiplier: 1.155, multiplierMin: 1.06, multiplierMax: 1.25 },
+  { score: 5, label: "Outstanding", multiplier: 1.38, multiplierMin: 1.26, multiplierMax: 1.50 },
 ]
 
 // Payout scale calculation - converts achievement % to payout %
