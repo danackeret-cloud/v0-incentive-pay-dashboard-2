@@ -351,7 +351,7 @@ export function STIPCalculator() {
 
               {/* Rating scale table */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-3 text-sm font-medium">Rating Scale</p>
+                <p className="mb-3 text-sm font-medium">Rating Scale (estimated range)</p>
                 <div className="space-y-2">
                   {ratingScale.map((rating) => (
                     <div 
