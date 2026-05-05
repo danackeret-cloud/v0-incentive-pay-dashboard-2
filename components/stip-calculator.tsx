@@ -20,8 +20,8 @@ import { StickyResultsBar } from "./sticky-results-bar"
 
 export function STIPCalculator() {
   // Employee inputs
-  const [baseSalary, setBaseSalary] = useState(125000)
-  const [targetPercent, setTargetPercent] = useState(15)
+  const [baseSalary, setBaseSalary] = useState(100000)
+  const [targetPercent, setTargetPercent] = useState(10)
 
   // Scenario inputs - achievement percentages relative to target (100% = on target)
   const [ordersScenario, setOrdersScenario] = useState(100) // % of target achieved
@@ -35,7 +35,7 @@ export function STIPCalculator() {
   const [customMultiplier, setCustomMultiplier] = useState<number>(ratingScale[2].multiplier * 100)
 
   // Local input state for target percent field
-  const [targetPercentInput, setTargetPercentInput] = useState("15")
+  const [targetPercentInput, setTargetPercentInput] = useState("10")
 
   // Calculate results
   const teamFinancials = useMemo(
