@@ -30,6 +30,9 @@ export function STIPCalculator() {
 
   // Personal rating - default to Average (score 3)
   const [personalRating, setPersonalRating] = useState<PerformanceRating>(ratingScale[2])
+  
+  // Custom multiplier override (as percentage, e.g. 100 = 100%)
+  const [customMultiplier, setCustomMultiplier] = useState<number>(ratingScale[2].multiplier * 100)
 
   // Local input state for target percent field
   const [targetPercentInput, setTargetPercentInput] = useState("15")
@@ -40,9 +43,15 @@ export function STIPCalculator() {
     [ordersScenario, revenueScenario, marginScenario]
   )
 
+  // Create a modified rating with the custom multiplier for calculations
+  const effectiveRating = useMemo(() => ({
+    ...personalRating,
+    multiplier: customMultiplier / 100
+  }), [personalRating, customMultiplier])
+
   const finalResults = useMemo(
-    () => calculateFinalPayout(baseSalary, targetPercent, teamFinancials.weightedPayout, personalRating),
-    [baseSalary, targetPercent, teamFinancials.weightedPayout, personalRating]
+    () => calculateFinalPayout(baseSalary, targetPercent, teamFinancials.weightedPayout, effectiveRating),
+    [baseSalary, targetPercent, teamFinancials.weightedPayout, effectiveRating]
   )
 
   // Snap thresholds (as percentages of target)
@@ -306,7 +315,10 @@ export function STIPCalculator() {
                 {ratingScale.map((rating) => (
                   <button
                     key={rating.score}
-                    onClick={() => setPersonalRating(rating)}
+                    onClick={() => {
+                      setPersonalRating(rating)
+                      setCustomMultiplier(rating.multiplier * 100)
+                    }}
                     className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-between min-h-[100px] ${
                       personalRating.score === rating.score
                         ? "border-primary bg-primary text-primary-foreground"
@@ -322,90 +334,124 @@ export function STIPCalculator() {
                 ))}
               </div>
 
-              {/* Visual rating scale with individual sliders */}
+              {/* Interactive rating sliders */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-4 text-sm font-medium">Payout Range by Rating (estimates - ranges overlap)</p>
+                <p className="mb-4 text-sm font-medium">Adjust Payout Within Rating Range</p>
                 
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {ratingScale.map((rating) => {
                     const maxValue = rating.multiplierMax * 100
                     const minValue = rating.multiplierMin * 100
-                    const midValue = rating.multiplier * 100
                     const isSelected = personalRating.score === rating.score
-                    const colors = {
-                      1: { bg: 'bg-red-500', text: 'text-red-600 dark:text-red-400' },
-                      2: { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400' },
-                      3: { bg: 'bg-yellow-500', text: 'text-yellow-600 dark:text-yellow-400' },
-                      4: { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400' },
-                      5: { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400' },
+                    const currentValue = isSelected ? customMultiplier : rating.multiplier * 100
+                    
+                    // Color configurations with hex values for gradients
+                    const colorConfig = {
+                      1: { bg: 'bg-red-500', text: 'text-red-600 dark:text-red-400', hex: '#ef4444' },
+                      2: { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400', hex: '#f97316' },
+                      3: { bg: 'bg-yellow-500', text: 'text-yellow-600 dark:text-yellow-400', hex: '#eab308' },
+                      4: { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400', hex: '#22c55e' },
+                      5: { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', hex: '#3b82f6' },
                     }
-                    const color = colors[rating.score as keyof typeof colors]
+                    const color = colorConfig[rating.score as keyof typeof colorConfig]
                     
                     return (
                       <div 
                         key={rating.score}
-                        className={`transition-opacity ${isSelected ? 'opacity-100' : 'opacity-50'}`}
+                        className={`transition-all cursor-pointer rounded-lg p-3 -mx-3 ${
+                          isSelected 
+                            ? 'bg-primary/10 ring-2 ring-primary/30' 
+                            : 'opacity-50 hover:opacity-75 hover:bg-muted'
+                        }`}
+                        onClick={() => {
+                          if (!isSelected) {
+                            setPersonalRating(rating)
+                            setCustomMultiplier(rating.multiplier * 100)
+                          }
+                        }}
                       >
-                        {/* Rating label and range */}
-                        <div className="flex items-center justify-between mb-1">
+                        {/* Rating label and current value */}
+                        <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className={`text-sm font-bold ${color.text}`}>{rating.score}</span>
                             <span className="text-xs text-muted-foreground">{rating.label}</span>
                           </div>
-                          <span className="text-xs font-medium text-muted-foreground">
-                            {maxValue === 0 ? '0%' : `${minValue.toFixed(0)}% - ${maxValue.toFixed(0)}%`}
+                          <span className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
+                            {currentValue.toFixed(0)}%
                           </span>
                         </div>
                         
-                        {/* Slider track from 0 to max */}
-                        <div className="relative h-6">
-                          {/* Background track (full 0-150% for context) */}
-                          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 rounded-full bg-muted" />
+                        {/* Slider with gradient track */}
+                        <div className="relative">
+                          {/* Custom gradient track background */}
+                          <div 
+                            className="absolute inset-x-0 h-2 rounded-full pointer-events-none"
+                            style={{ 
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              background: rating.score === 1 
+                                ? `linear-gradient(to right, ${color.hex} 0%, ${color.hex}00 10%)`
+                                : `linear-gradient(to right, 
+                                    ${color.hex}10 0%, 
+                                    ${color.hex}30 ${(minValue / 150) * 100}%, 
+                                    ${color.hex} ${((minValue + maxValue) / 2 / 150) * 100}%, 
+                                    ${color.hex}30 ${(maxValue / 150) * 100}%, 
+                                    ${color.hex}10 100%
+                                  )`
+                            }}
+                          />
                           
-                          {/* Filled range showing min to max */}
+                          {/* Range indicator markers */}
                           {maxValue > 0 && (
-                            <div 
-                              className={`absolute top-1/2 -translate-y-1/2 h-2 rounded-full ${color.bg} ${isSelected ? 'opacity-80' : 'opacity-40'}`}
-                              style={{ 
-                                left: `${(minValue / 150) * 100}%`, 
-                                width: `${((maxValue - minValue) / 150) * 100}%` 
-                              }}
-                            />
+                            <>
+                              {/* Min marker */}
+                              <div 
+                                className="absolute top-1/2 w-0.5 h-4 -translate-y-1/2 rounded-full opacity-60"
+                                style={{ 
+                                  left: `${(minValue / 150) * 100}%`,
+                                  backgroundColor: color.hex
+                                }}
+                              />
+                              {/* Max marker */}
+                              <div 
+                                className="absolute top-1/2 w-0.5 h-4 -translate-y-1/2 rounded-full opacity-60"
+                                style={{ 
+                                  left: `${(maxValue / 150) * 100}%`,
+                                  backgroundColor: color.hex
+                                }}
+                              />
+                            </>
                           )}
                           
-                          {/* Midpoint marker (typical value) */}
-                          {maxValue > 0 && (
-                            <div 
-                              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background ${color.bg} ${isSelected ? '' : 'opacity-60'}`}
-                              style={{ left: `${(midValue / 150) * 100}%`, transform: 'translate(-50%, -50%)' }}
-                            />
-                          )}
-                          
-                          {/* Zero marker for rating 1 */}
-                          {maxValue === 0 && (
-                            <div 
-                              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background ${color.bg} ${isSelected ? '' : 'opacity-60'}`}
-                              style={{ left: '0%', transform: 'translate(0%, -50%)' }}
-                            />
-                          )}
+                          <Slider
+                            value={[currentValue]}
+                            onValueChange={([v]) => {
+                              if (isSelected) {
+                                setCustomMultiplier(v)
+                              } else {
+                                setPersonalRating(rating)
+                                setCustomMultiplier(v)
+                              }
+                            }}
+                            min={0}
+                            max={150}
+                            step={1}
+                            disabled={false}
+                            className={`w-full ${isSelected ? '' : 'pointer-events-none'}`}
+                          />
+                        </div>
+                        
+                        {/* Range hint */}
+                        <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                          <span>0%</span>
+                          <span className={`${color.text} font-medium`}>
+                            {maxValue === 0 ? 'Fixed at 0%' : `Typical: ${minValue.toFixed(0)}% - ${maxValue.toFixed(0)}%`}
+                          </span>
+                          <span>150%</span>
                         </div>
                       </div>
                     )
                   })}
-                </div>
-                
-                {/* Scale markers */}
-                <div className="relative h-5 mt-2">
-                  {[0, 50, 100, 150].map((val) => (
-                    <div
-                      key={val}
-                      className="absolute flex flex-col items-center"
-                      style={{ left: `${(val / 150) * 100}%`, transform: 'translateX(-50%)' }}
-                    >
-                      <div className="w-px h-2 bg-muted-foreground/30" />
-                      <span className="text-[10px] text-muted-foreground">{val}%</span>
-                    </div>
-                  ))}
                 </div>
               </div>
 
@@ -413,13 +459,13 @@ export function STIPCalculator() {
               <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Estimated Rating Multiplier</p>
+                    <p className="font-medium">Personal Performance Multiplier</p>
                     <p className="text-xs text-muted-foreground">
-                      {personalRating.label} ({personalRating.multiplier > 0 ? `${(personalRating.multiplierMin * 100).toFixed(0)}%-${(personalRating.multiplierMax * 100).toFixed(0)}%` : "0%"})
+                      {personalRating.label} (typical range: {personalRating.multiplier > 0 ? `${(personalRating.multiplierMin * 100).toFixed(0)}%-${(personalRating.multiplierMax * 100).toFixed(0)}%` : "0%"})
                     </p>
                   </div>
                   <span className="text-2xl font-bold text-primary">
-                    {personalRating.multiplier === 0 ? "0%" : `~${(personalRating.multiplier * 100).toFixed(0)}%`}
+                    {customMultiplier.toFixed(0)}%
                   </span>
                 </div>
               </div>
@@ -439,7 +485,7 @@ export function STIPCalculator() {
       <ResultsPanel
         targetBonus={finalResults.targetBonus}
         teamFinancialPayout={teamFinancials.weightedPayout}
-        personalMultiplier={personalRating.multiplier}
+        personalMultiplier={customMultiplier / 100}
         finalPayoutPercent={finalResults.finalPayoutPercent}
         finalPayoutAmount={finalResults.finalPayoutAmount}
         ratingLabel={personalRating.label}
@@ -452,7 +498,7 @@ export function STIPCalculator() {
       <StickyResultsBar
         targetBonus={finalResults.targetBonus}
         teamFinancialPayout={teamFinancials.weightedPayout}
-        personalMultiplier={personalRating.multiplier}
+        personalMultiplier={customMultiplier / 100}
         finalPayoutPercent={finalResults.finalPayoutPercent}
         finalPayoutAmount={finalResults.finalPayoutAmount}
       />
