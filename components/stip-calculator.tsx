@@ -322,138 +322,90 @@ export function STIPCalculator() {
                 ))}
               </div>
 
-              {/* Visual rating scale with overlapping ranges */}
+              {/* Visual rating scale with individual sliders */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-3 text-sm font-medium">Rating Scale (estimated ranges - may overlap)</p>
+                <p className="mb-4 text-sm font-medium">Payout Range by Rating (estimates - ranges overlap)</p>
                 
-                {/* Single horizontal bar showing 0-150% scale */}
-                <div className="relative mt-4 mb-8">
-                  {/* Base track */}
-                  <div className="h-12 rounded-lg bg-muted relative overflow-hidden">
-                    {/* Rating 1 - stays at 0% */}
-                    <div 
-                      className="absolute h-full opacity-90"
-                      style={{ 
-                        left: '0%', 
-                        width: `${(0 / 150) * 100}%`,
-                        background: 'linear-gradient(to right, #ef4444, #ef444400)'
-                      }}
-                    />
+                <div className="space-y-4">
+                  {ratingScale.map((rating) => {
+                    const maxValue = rating.multiplierMax * 100
+                    const minValue = rating.multiplierMin * 100
+                    const midValue = rating.multiplier * 100
+                    const isSelected = personalRating.score === rating.score
+                    const colors = {
+                      1: { bg: 'bg-red-500', text: 'text-red-600 dark:text-red-400' },
+                      2: { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400' },
+                      3: { bg: 'bg-yellow-500', text: 'text-yellow-600 dark:text-yellow-400' },
+                      4: { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400' },
+                      5: { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400' },
+                    }
+                    const color = colors[rating.score as keyof typeof colors]
                     
-                    {/* Rating 2: 10% - 75% */}
-                    <div 
-                      className={`absolute h-full transition-opacity ${personalRating.score === 2 ? 'opacity-100' : 'opacity-60'}`}
-                      style={{ 
-                        left: `${(10 / 150) * 100}%`, 
-                        width: `${((75 - 10) / 150) * 100}%`,
-                        background: 'linear-gradient(to right, #f9731600, #f97316, #f9731600)'
-                      }}
-                    />
-                    
-                    {/* Rating 3: 80% - 105% */}
-                    <div 
-                      className={`absolute h-full transition-opacity ${personalRating.score === 3 ? 'opacity-100' : 'opacity-60'}`}
-                      style={{ 
-                        left: `${(80 / 150) * 100}%`, 
-                        width: `${((105 - 80) / 150) * 100}%`,
-                        background: 'linear-gradient(to right, #eab30800, #eab308, #eab30800)'
-                      }}
-                    />
-                    
-                    {/* Rating 4: 106% - 125% */}
-                    <div 
-                      className={`absolute h-full transition-opacity ${personalRating.score === 4 ? 'opacity-100' : 'opacity-60'}`}
-                      style={{ 
-                        left: `${(106 / 150) * 100}%`, 
-                        width: `${((125 - 106) / 150) * 100}%`,
-                        background: 'linear-gradient(to right, #22c55e00, #22c55e, #22c55e00)'
-                      }}
-                    />
-                    
-                    {/* Rating 5: 126% - 150% */}
-                    <div 
-                      className={`absolute h-full transition-opacity ${personalRating.score === 5 ? 'opacity-100' : 'opacity-60'}`}
-                      style={{ 
-                        left: `${(126 / 150) * 100}%`, 
-                        width: `${((150 - 126) / 150) * 100}%`,
-                        background: 'linear-gradient(to right, #3b82f600, #3b82f6, #3b82f6)'
-                      }}
-                    />
-
-                    {/* Rating labels positioned on the bar */}
-                    {ratingScale.filter(r => r.score > 1).map((rating) => {
-                      const midpoint = ((rating.multiplierMin + rating.multiplierMax) / 2) * 100
-                      return (
-                        <div
-                          key={rating.score}
-                          className={`absolute top-1/2 -translate-y-1/2 text-xs font-bold transition-all ${
-                            personalRating.score === rating.score 
-                              ? 'text-foreground scale-110' 
-                              : 'text-foreground/70'
-                          }`}
-                          style={{ 
-                            left: `${(midpoint / 150) * 100}%`,
-                            transform: 'translate(-50%, -50%)'
-                          }}
-                        >
-                          {rating.score}
-                        </div>
-                      )
-                    })}
-                    
-                    {/* Rating 1 label at 0 */}
-                    <div
-                      className={`absolute top-1/2 text-xs font-bold transition-all ${
-                        personalRating.score === 1 
-                          ? 'text-foreground scale-110' 
-                          : 'text-foreground/70'
-                      }`}
-                      style={{ 
-                        left: '4px',
-                        transform: 'translateY(-50%)'
-                      }}
-                    >
-                      1
-                    </div>
-                  </div>
-                  
-                  {/* Scale markers below */}
-                  <div className="relative h-6 mt-1">
-                    {[0, 25, 50, 75, 100, 125, 150].map((val) => (
-                      <div
-                        key={val}
-                        className="absolute flex flex-col items-center"
-                        style={{ left: `${(val / 150) * 100}%`, transform: 'translateX(-50%)' }}
+                    return (
+                      <div 
+                        key={rating.score}
+                        className={`transition-opacity ${isSelected ? 'opacity-100' : 'opacity-50'}`}
                       >
-                        <div className="w-px h-2 bg-muted-foreground/50" />
-                        <span className="text-[10px] text-muted-foreground">{val}%</span>
+                        {/* Rating label and range */}
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-sm font-bold ${color.text}`}>{rating.score}</span>
+                            <span className="text-xs text-muted-foreground">{rating.label}</span>
+                          </div>
+                          <span className="text-xs font-medium text-muted-foreground">
+                            {maxValue === 0 ? '0%' : `${minValue.toFixed(0)}% - ${maxValue.toFixed(0)}%`}
+                          </span>
+                        </div>
+                        
+                        {/* Slider track from 0 to max */}
+                        <div className="relative h-6">
+                          {/* Background track (full 0-150% for context) */}
+                          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 rounded-full bg-muted" />
+                          
+                          {/* Filled range showing min to max */}
+                          {maxValue > 0 && (
+                            <div 
+                              className={`absolute top-1/2 -translate-y-1/2 h-2 rounded-full ${color.bg} ${isSelected ? 'opacity-80' : 'opacity-40'}`}
+                              style={{ 
+                                left: `${(minValue / 150) * 100}%`, 
+                                width: `${((maxValue - minValue) / 150) * 100}%` 
+                              }}
+                            />
+                          )}
+                          
+                          {/* Midpoint marker (typical value) */}
+                          {maxValue > 0 && (
+                            <div 
+                              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background ${color.bg} ${isSelected ? '' : 'opacity-60'}`}
+                              style={{ left: `${(midValue / 150) * 100}%`, transform: 'translate(-50%, -50%)' }}
+                            />
+                          )}
+                          
+                          {/* Zero marker for rating 1 */}
+                          {maxValue === 0 && (
+                            <div 
+                              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background ${color.bg} ${isSelected ? '' : 'opacity-60'}`}
+                              style={{ left: '0%', transform: 'translate(0%, -50%)' }}
+                            />
+                          )}
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    )
+                  })}
                 </div>
-
-                {/* Legend */}
-                <div className="grid grid-cols-5 gap-1 text-[10px] mt-2">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-red-500/80" />
-                    <span className="text-muted-foreground">1: 0%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-orange-500/80" />
-                    <span className="text-muted-foreground">2: 10-75%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-yellow-500/80" />
-                    <span className="text-muted-foreground">3: 80-105%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-green-500/80" />
-                    <span className="text-muted-foreground">4: 106-125%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-blue-500/80" />
-                    <span className="text-muted-foreground">5: 126-150%</span>
-                  </div>
+                
+                {/* Scale markers */}
+                <div className="relative h-5 mt-2">
+                  {[0, 50, 100, 150].map((val) => (
+                    <div
+                      key={val}
+                      className="absolute flex flex-col items-center"
+                      style={{ left: `${(val / 150) * 100}%`, transform: 'translateX(-50%)' }}
+                    >
+                      <div className="w-px h-2 bg-muted-foreground/30" />
+                      <span className="text-[10px] text-muted-foreground">{val}%</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
