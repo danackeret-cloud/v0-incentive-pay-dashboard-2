@@ -11,7 +11,7 @@ export default function STIPCalculatorPage() {
           </h1>
           <p className="mt-2 text-balance text-muted-foreground">
             Explore how your short-term incentive plan (STIP) is calculated. Run different scenarios to see how 
-            changes in team financial performance and your personal rating affect your bonus.
+            changes in Team Financial Performance and your Individual Performance Rating affect your payout.
           </p>
           <p className="mt-1 text-sm text-muted-foreground/80">
             For salaried employees only.
@@ -32,28 +32,25 @@ export default function STIPCalculatorPage() {
           <h2 className="font-semibold text-foreground">How STIP Works</h2>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-sm">
             <span className="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">
-              Team Financials %
+              Team Financial Performance %
             </span>
             <span className="text-muted-foreground">x</span>
             <span className="rounded-full bg-accent/10 px-3 py-1 font-medium text-accent">
-              Personal Rating %
+              Individual Performance Rating %
             </span>
             <span className="text-muted-foreground">=</span>
             <span className="rounded-full bg-foreground px-3 py-1 font-medium text-background">
               Final STIP Payout %
             </span>
           </div>
-          <p className="mt-3 text-center text-xs text-muted-foreground">
-            Team financials are based on Orders, Revenue, and Margin achievement vs. target (equally weighted). 
-            Personal rating is a 1-5 scale assigned by your manager.
-          </p>
+
         </div>
 
         {/* Calculator */}
         <STIPCalculator />
 
         {/* Footer */}
-        <footer className="mt-12 border-t pt-6 text-center text-sm text-muted-foreground">
+        <footer className="mt-6 border-t pt-4 text-center text-sm text-muted-foreground">
           <p className="text-balance">
             This calculator provides estimates for educational purposes only.
             Final bonus amounts are subject to management approval and actual financial results.
