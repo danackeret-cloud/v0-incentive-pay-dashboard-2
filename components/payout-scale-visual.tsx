@@ -47,7 +47,7 @@ export function PayoutScaleVisual({
       <CardHeader>
         <CardTitle>STIP Payout Visual</CardTitle>
         <CardDescription>
-          Team Financial Performance % (x-axis) combined with Performance Rating (y-axis) determines your final bonus
+          Team Financial Performance % (x-axis) combined with Individual Performance Rating (y-axis) determines your final STIP Payout.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -151,7 +151,7 @@ export function PayoutScaleVisual({
               className="fill-foreground text-[10px] font-medium"
               transform={`rotate(-90, 12, ${margin.top + chartHeight / 2})`}
             >
-              Rating (Multiplier)
+              Individual Performance Rating (Estimated)
             </text>
 
             {/* X-axis tick labels */}

@@ -25,7 +25,7 @@ export function ResultsPanel({
   return (
     <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
       <CardHeader>
-        <CardTitle>Estimated STIP Payout</CardTitle>
+        <CardTitle>STIP Payout</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Formula Visualization */}
@@ -36,8 +36,8 @@ export function ResultsPanel({
           </div>
           <span className="text-2xl font-bold text-muted-foreground">x</span>
           <div className="flex flex-col items-center rounded-lg border bg-card p-4 text-center">
-            <span className="text-sm text-muted-foreground">Team Financials</span>
-            <span className="text-xl font-bold">{teamFinancialPayout.toFixed(1)}%</span>
+            <span className="text-sm text-muted-foreground">Team Financial Performance</span>
+            <span className="text-xl font-bold">{teamFinancialPayout.toFixed(0)}%</span>
           </div>
           <span className="text-2xl font-bold text-muted-foreground">x</span>
           <div className="flex flex-col items-center rounded-lg border bg-card p-4 text-center">
@@ -46,9 +46,9 @@ export function ResultsPanel({
           </div>
           <span className="text-2xl font-bold text-muted-foreground">=</span>
           <div className={`flex flex-col items-center rounded-lg p-4 text-center ${isZeroPayout ? "bg-destructive/10" : "bg-primary"}`}>
-            <span className={`text-sm ${isZeroPayout ? "text-destructive" : "text-primary-foreground/80"}`}>Est. Payout</span>
+            <span className={`text-sm ${isZeroPayout ? "text-destructive" : "text-primary-foreground/80"}`}>Payout</span>
             <span className={`text-2xl font-bold ${isZeroPayout ? "text-destructive" : "text-primary-foreground"}`}>
-              ~{formatCurrency(finalPayoutAmount)}
+              {formatCurrency(finalPayoutAmount)}
             </span>
           </div>
         </div>
@@ -64,19 +64,19 @@ export function ResultsPanel({
         <div className="rounded-lg bg-muted/50 p-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <p className="text-sm text-muted-foreground">Est. % of Target</p>
-              <p className="text-2xl font-bold">~{finalPayoutPercent.toFixed(1)}%</p>
+              <p className="text-sm text-muted-foreground">% of Target</p>
+              <p className="text-2xl font-bold">{finalPayoutPercent.toFixed(0)}%</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Est. Payout Amount</p>
+              <p className="text-sm text-muted-foreground">Payout Amount</p>
               <p className={`text-2xl font-bold ${isZeroPayout ? "text-destructive" : "text-accent"}`}>
-                ~{formatCurrency(finalPayoutAmount)}
+                {formatCurrency(finalPayoutAmount)}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Est. Difference from Target</p>
+              <p className="text-sm text-muted-foreground">Difference from Target</p>
               <p className={`text-2xl font-bold ${finalPayoutAmount >= targetBonus ? "text-accent" : "text-destructive"}`}>
-                {finalPayoutAmount >= targetBonus ? "+" : ""}~{formatCurrency(Math.abs(finalPayoutAmount - targetBonus))}
+                {finalPayoutAmount >= targetBonus ? "+" : ""}{formatCurrency(Math.abs(finalPayoutAmount - targetBonus))}
               </p>
             </div>
           </div>
@@ -86,7 +86,7 @@ export function ResultsPanel({
         <div className="mt-4 text-sm text-muted-foreground">
           <p className="font-medium text-foreground">Calculation:</p>
           <p className="font-mono text-xs">
-            {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(1)}% x {(personalMultiplier * 100).toFixed(0)}% = {formatCurrency(finalPayoutAmount)}
+            {formatCurrency(targetBonus)} x {teamFinancialPayout.toFixed(0)}% x {(personalMultiplier * 100).toFixed(0)}% = {formatCurrency(finalPayoutAmount)}
           </p>
         </div>
 

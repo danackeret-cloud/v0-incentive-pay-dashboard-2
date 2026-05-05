@@ -32,11 +32,11 @@ export default function STIPCalculatorPage() {
           <h2 className="font-semibold text-foreground">How STIP Works</h2>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-sm">
             <span className="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">
-              Team Financials %
+              Team Financial Performance %
             </span>
             <span className="text-muted-foreground">x</span>
             <span className="rounded-full bg-accent/10 px-3 py-1 font-medium text-accent">
-              Personal Rating %
+              Individual Performance Rating %
             </span>
             <span className="text-muted-foreground">=</span>
             <span className="rounded-full bg-foreground px-3 py-1 font-medium text-background">
