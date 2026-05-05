@@ -152,12 +152,12 @@ export function STIPCalculator() {
             <CardDescription>
               Adjust the sliders to explore different financial performance scenarios. Each metric is weighted equally (33.3%).
             </CardDescription>
-            <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
-              <p className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">Note: </span>
-                Financial targets are measured at the lowest applicable level (Corporate &gt; Segment &gt; Business Group &gt; Business Unit). Product line managers are measured on their individual product lines.
-              </p>
-            </div>
+  <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
+  <p className="text-xs text-muted-foreground">
+    <span className="font-semibold text-foreground">Note: </span>
+    Orders and Revenue are measured down to the BU level, Adj. EBITDA is measured down to the Business Group level.
+  </p>
+  </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col space-y-6">
             {/* Orders Scenario */}
@@ -302,11 +302,11 @@ export function STIPCalculator() {
             <CardDescription>
               Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities and Individual/Team Goals. Higher performers receive a larger % of salary; lower performers receive less.
             </CardDescription>
-            <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
-              <p className="text-xs text-amber-700 dark:text-amber-400">
-                <span className="font-semibold">Note: </span>Percentages below are estimates and can vary based on how your manager allocates the pool.
-              </p>
-            </div>
+  <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
+  <p className="text-xs text-amber-700 dark:text-amber-400">
+    <span className="font-semibold">Note: </span>Payout percentages within each rating are not fixed. Managers have discretion to allocate within a range based on individual performance. Use the sliders to estimate different scenarios.
+  </p>
+  </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col space-y-6">
@@ -357,6 +357,9 @@ export function STIPCalculator() {
                     const maxStop = (maxValue / 150) * 100
                     const midStop = (minStop + maxStop) / 2
                     
+                    // Rating 1 is fixed at 0%, not slideable
+                    const isFixedZero = rating.score === 1
+                    
                     return (
                       <div 
                         key={rating.score}
@@ -368,7 +371,7 @@ export function STIPCalculator() {
                         onClick={() => {
                           if (!isSelected) {
                             setPersonalRating(rating)
-                            setCustomMultiplier(rating.multiplier * 100)
+                            setCustomMultiplier(isFixedZero ? 0 : rating.multiplier * 100)
                           }
                         }}
                       >
@@ -379,57 +382,74 @@ export function STIPCalculator() {
                             <span className="text-xs text-muted-foreground">{rating.label}</span>
                           </div>
                           <span className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
-                            {currentValue.toFixed(0)}%
+                            {isFixedZero ? '0%' : `${currentValue.toFixed(0)}%`}
                           </span>
                         </div>
                         
-                        {/* Slider with gradient track */}
-                        <div className="relative">
-                          {/* Custom gradient track background - bold color in expected range, fades outward */}
-                          <div 
-                            className="absolute inset-x-0 h-4 rounded-full pointer-events-none"
-                            style={{ 
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              background: rating.score === 1 
-                                ? `linear-gradient(to right, ${color.hex} 0%, ${color.hex}90 3%, ${color.hex}50 8%, ${color.hex}20 15%, transparent 25%)`
-                                : `linear-gradient(to right, 
-                                    ${color.hex}10 0%,
-                                    ${color.hex}20 ${Math.max(0, minStop - 15)}%,
-                                    ${color.hex}50 ${Math.max(0, minStop - 5)}%,
-                                    ${color.hex}90 ${minStop}%,
-                                    ${color.hex} ${midStop}%,
-                                    ${color.hex}90 ${maxStop}%,
-                                    ${color.hex}50 ${Math.min(100, maxStop + 5)}%,
-                                    ${color.hex}20 ${Math.min(100, maxStop + 15)}%,
-                                    ${color.hex}10 100%
-                                  )`
-                            }}
-                          />
-                          
-                          <Slider
-                            value={[currentValue]}
-                            onValueChange={([v]) => {
-                              if (isSelected) {
-                                setCustomMultiplier(v)
-                              } else {
-                                setPersonalRating(rating)
-                                setCustomMultiplier(v)
-                              }
-                            }}
-                            min={0}
-                            max={150}
-                            step={1}
-                            disabled={false}
-                            className={`w-full ${isSelected ? '' : 'pointer-events-none'}`}
-                          />
-                        </div>
-                        
-                        {/* Scale markers */}
-                        <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                          <span>0%</span>
-                          <span>150%</span>
-                        </div>
+                        {isFixedZero ? (
+                          /* Rating 1: Fixed at 0% - no slider, just a static indicator */
+                          <div className="relative">
+                            <div 
+                              className="h-4 rounded-full"
+                              style={{ 
+                                background: `linear-gradient(to right, ${color.hex} 0%, ${color.hex}60 2%, ${color.hex}20 5%, transparent 10%)`
+                              }}
+                            />
+                            <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                              <span>Fixed at 0%</span>
+                              <span></span>
+                            </div>
+                          </div>
+                        ) : (
+                          /* Ratings 2-5: Slideable */
+                          <>
+                            {/* Slider with gradient track */}
+                            <div className="relative">
+                              {/* Custom gradient track background - bold color in expected range, fades outward */}
+                              <div 
+                                className="absolute inset-x-0 h-4 rounded-full pointer-events-none"
+                                style={{ 
+                                  top: '50%',
+                                  transform: 'translateY(-50%)',
+                                  background: `linear-gradient(to right, 
+                                      ${color.hex}10 0%,
+                                      ${color.hex}20 ${Math.max(0, minStop - 15)}%,
+                                      ${color.hex}50 ${Math.max(0, minStop - 5)}%,
+                                      ${color.hex}90 ${minStop}%,
+                                      ${color.hex} ${midStop}%,
+                                      ${color.hex}90 ${maxStop}%,
+                                      ${color.hex}50 ${Math.min(100, maxStop + 5)}%,
+                                      ${color.hex}20 ${Math.min(100, maxStop + 15)}%,
+                                      ${color.hex}10 100%
+                                    )`
+                                }}
+                              />
+                              
+                              <Slider
+                                value={[currentValue]}
+                                onValueChange={([v]) => {
+                                  if (isSelected) {
+                                    setCustomMultiplier(v)
+                                  } else {
+                                    setPersonalRating(rating)
+                                    setCustomMultiplier(v)
+                                  }
+                                }}
+                                min={0}
+                                max={150}
+                                step={1}
+                                disabled={false}
+                                className={`w-full ${isSelected ? '' : 'pointer-events-none'}`}
+                              />
+                            </div>
+                            
+                            {/* Scale markers */}
+                            <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                              <span>0%</span>
+                              <span>150%</span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )
                   })}
