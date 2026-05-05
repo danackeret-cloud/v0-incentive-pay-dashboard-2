@@ -322,25 +322,138 @@ export function STIPCalculator() {
                 ))}
               </div>
 
-              {/* Rating scale table */}
+              {/* Visual rating scale with overlapping ranges */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-3 text-sm font-medium">Rating Scale (estimated range)</p>
-                <div className="space-y-2">
-                  {ratingScale.map((rating) => (
+                <p className="mb-3 text-sm font-medium">Rating Scale (estimated ranges - may overlap)</p>
+                
+                {/* Single horizontal bar showing 0-150% scale */}
+                <div className="relative mt-4 mb-8">
+                  {/* Base track */}
+                  <div className="h-12 rounded-lg bg-muted relative overflow-hidden">
+                    {/* Rating 1 - stays at 0% */}
                     <div 
-                      key={rating.score}
-                      className={`flex items-center justify-between text-sm ${
-                        personalRating.score === rating.score ? "font-medium text-primary" : "text-muted-foreground"
+                      className="absolute h-full opacity-90"
+                      style={{ 
+                        left: '0%', 
+                        width: `${(0 / 150) * 100}%`,
+                        background: 'linear-gradient(to right, #ef4444, #ef444400)'
+                      }}
+                    />
+                    
+                    {/* Rating 2: 10% - 75% */}
+                    <div 
+                      className={`absolute h-full transition-opacity ${personalRating.score === 2 ? 'opacity-100' : 'opacity-60'}`}
+                      style={{ 
+                        left: `${(10 / 150) * 100}%`, 
+                        width: `${((75 - 10) / 150) * 100}%`,
+                        background: 'linear-gradient(to right, #f9731600, #f97316, #f9731600)'
+                      }}
+                    />
+                    
+                    {/* Rating 3: 80% - 105% */}
+                    <div 
+                      className={`absolute h-full transition-opacity ${personalRating.score === 3 ? 'opacity-100' : 'opacity-60'}`}
+                      style={{ 
+                        left: `${(80 / 150) * 100}%`, 
+                        width: `${((105 - 80) / 150) * 100}%`,
+                        background: 'linear-gradient(to right, #eab30800, #eab308, #eab30800)'
+                      }}
+                    />
+                    
+                    {/* Rating 4: 106% - 125% */}
+                    <div 
+                      className={`absolute h-full transition-opacity ${personalRating.score === 4 ? 'opacity-100' : 'opacity-60'}`}
+                      style={{ 
+                        left: `${(106 / 150) * 100}%`, 
+                        width: `${((125 - 106) / 150) * 100}%`,
+                        background: 'linear-gradient(to right, #22c55e00, #22c55e, #22c55e00)'
+                      }}
+                    />
+                    
+                    {/* Rating 5: 126% - 150% */}
+                    <div 
+                      className={`absolute h-full transition-opacity ${personalRating.score === 5 ? 'opacity-100' : 'opacity-60'}`}
+                      style={{ 
+                        left: `${(126 / 150) * 100}%`, 
+                        width: `${((150 - 126) / 150) * 100}%`,
+                        background: 'linear-gradient(to right, #3b82f600, #3b82f6, #3b82f6)'
+                      }}
+                    />
+
+                    {/* Rating labels positioned on the bar */}
+                    {ratingScale.filter(r => r.score > 1).map((rating) => {
+                      const midpoint = ((rating.multiplierMin + rating.multiplierMax) / 2) * 100
+                      return (
+                        <div
+                          key={rating.score}
+                          className={`absolute top-1/2 -translate-y-1/2 text-xs font-bold transition-all ${
+                            personalRating.score === rating.score 
+                              ? 'text-foreground scale-110' 
+                              : 'text-foreground/70'
+                          }`}
+                          style={{ 
+                            left: `${(midpoint / 150) * 100}%`,
+                            transform: 'translate(-50%, -50%)'
+                          }}
+                        >
+                          {rating.score}
+                        </div>
+                      )
+                    })}
+                    
+                    {/* Rating 1 label at 0 */}
+                    <div
+                      className={`absolute top-1/2 text-xs font-bold transition-all ${
+                        personalRating.score === 1 
+                          ? 'text-foreground scale-110' 
+                          : 'text-foreground/70'
                       }`}
+                      style={{ 
+                        left: '4px',
+                        transform: 'translateY(-50%)'
+                      }}
                     >
-                      <span>{rating.score} - {rating.label}</span>
-                      <span>
-                        {rating.multiplier === 0 
-                          ? "0%" 
-                          : `${(rating.multiplierMin * 100).toFixed(0)}% - ${(rating.multiplierMax * 100).toFixed(0)}%`}
-                      </span>
+                      1
                     </div>
-                  ))}
+                  </div>
+                  
+                  {/* Scale markers below */}
+                  <div className="relative h-6 mt-1">
+                    {[0, 25, 50, 75, 100, 125, 150].map((val) => (
+                      <div
+                        key={val}
+                        className="absolute flex flex-col items-center"
+                        style={{ left: `${(val / 150) * 100}%`, transform: 'translateX(-50%)' }}
+                      >
+                        <div className="w-px h-2 bg-muted-foreground/50" />
+                        <span className="text-[10px] text-muted-foreground">{val}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div className="grid grid-cols-5 gap-1 text-[10px] mt-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-red-500/80" />
+                    <span className="text-muted-foreground">1: 0%</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-orange-500/80" />
+                    <span className="text-muted-foreground">2: 10-75%</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-yellow-500/80" />
+                    <span className="text-muted-foreground">3: 80-105%</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-green-500/80" />
+                    <span className="text-muted-foreground">4: 106-125%</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded bg-blue-500/80" />
+                    <span className="text-muted-foreground">5: 126-150%</span>
+                  </div>
                 </div>
               </div>
 
