@@ -150,7 +150,7 @@ export function STIPCalculator() {
           <CardHeader>
             <CardTitle>Team Financial Performance</CardTitle>
             <CardDescription>
-              Adjust the sliders to explore different financial performance scenarios. Each metric is weighted equally (33.3%).
+              Team financial performance determines the size of the Team Bonus Pool. Adjust the sliders to explore different financial performance scenarios. Each metric is weighted equally (33.3%).
             </CardDescription>
   <div className="mt-2 rounded-lg bg-secondary/50 border border-secondary p-3">
   <p className="text-xs text-muted-foreground">
@@ -326,14 +326,14 @@ export function STIPCalculator() {
                     }`}
                   >
                     <span className="text-2xl font-bold">{rating.score}</span>
-                    <span className="text-[9px] leading-tight text-center break-words hyphens-auto">{rating.label}</span>
+                    <span className="text-[11px] leading-tight text-center break-words hyphens-auto">{rating.label}</span>
                   </button>
                 ))}
               </div>
 
               {/* Interactive rating sliders */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-4 text-sm font-medium">Individual Performance Rating</p>
+                <p className="mb-4 text-sm text-muted-foreground">Managers divide the Team Bonus Pool among their team based on individual performance against AV Strategic Initiatives, Team Goals, and Individual Goals.</p>
                 
                 <div className="space-y-4">
                   {ratingScale.map((rating) => {
