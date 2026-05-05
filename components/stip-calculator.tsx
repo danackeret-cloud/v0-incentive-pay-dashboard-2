@@ -326,7 +326,7 @@ export function STIPCalculator() {
                     }`}
                   >
                     <span className="text-2xl font-bold">{rating.score}</span>
-                    <span className="text-[11px] leading-tight text-center break-words hyphens-auto">{rating.label}</span>
+                    <span className="text-[10px] leading-tight text-center break-words hyphens-auto">{rating.label}</span>
                   </button>
                 ))}
               </div>
