@@ -6,12 +6,14 @@ import { ratingScale, formatCurrency } from "@/lib/stip-calculator"
 interface PayoutScaleVisualProps {
   teamFinancialPayout: number // The weighted payout percentage (0-150)
   personalRating: number // The rating score (1-5)
+  personalMultiplier: number // The custom multiplier (0-1.5)
   targetBonus: number // Target bonus amount in dollars
 }
 
 export function PayoutScaleVisual({ 
   teamFinancialPayout, 
-  personalRating, 
+  personalRating,
+  personalMultiplier,
   targetBonus
 }: PayoutScaleVisualProps) {
   // Chart dimensions and margins
@@ -34,9 +36,8 @@ export function PayoutScaleVisual({
   const markerX = xScale(Math.min(teamFinancialPayout, 150))
   const markerY = yScale(currentRatingIndex)
 
-  // Calculate final payout for display
-  const currentRating = ratingScale.find(r => r.score === personalRating)
-  const finalPayoutDollars = (targetBonus * teamFinancialPayout / 100) * (currentRating?.multiplier || 1)
+  // Calculate final payout for display using the custom multiplier
+  const finalPayoutDollars = (targetBonus * teamFinancialPayout / 100) * personalMultiplier
 
   // Key X-axis points for Team Financial Payout
   const xTicks = [0, 40, 100, 150]

@@ -385,24 +385,24 @@ export function STIPCalculator() {
                         
                         {/* Slider with gradient track */}
                         <div className="relative">
-                          {/* Custom gradient track background - feathers from center of range outward */}
+                          {/* Custom gradient track background - bold color in expected range, fades outward */}
                           <div 
-                            className="absolute inset-x-0 h-3 rounded-full pointer-events-none"
+                            className="absolute inset-x-0 h-4 rounded-full pointer-events-none"
                             style={{ 
                               top: '50%',
                               transform: 'translateY(-50%)',
                               background: rating.score === 1 
-                                ? `linear-gradient(to right, ${color.hex}cc 0%, ${color.hex}40 5%, ${color.hex}08 15%, transparent 30%)`
+                                ? `linear-gradient(to right, ${color.hex} 0%, ${color.hex}90 3%, ${color.hex}50 8%, ${color.hex}20 15%, transparent 25%)`
                                 : `linear-gradient(to right, 
-                                    transparent 0%,
-                                    ${color.hex}08 ${Math.max(0, minStop - 20)}%,
-                                    ${color.hex}25 ${Math.max(0, minStop - 8)}%,
-                                    ${color.hex}60 ${minStop}%,
-                                    ${color.hex}cc ${midStop}%,
-                                    ${color.hex}60 ${maxStop}%,
-                                    ${color.hex}25 ${Math.min(100, maxStop + 8)}%,
-                                    ${color.hex}08 ${Math.min(100, maxStop + 20)}%,
-                                    transparent 100%
+                                    ${color.hex}10 0%,
+                                    ${color.hex}20 ${Math.max(0, minStop - 15)}%,
+                                    ${color.hex}50 ${Math.max(0, minStop - 5)}%,
+                                    ${color.hex}90 ${minStop}%,
+                                    ${color.hex} ${midStop}%,
+                                    ${color.hex}90 ${maxStop}%,
+                                    ${color.hex}50 ${Math.min(100, maxStop + 5)}%,
+                                    ${color.hex}20 ${Math.min(100, maxStop + 15)}%,
+                                    ${color.hex}10 100%
                                   )`
                             }}
                           />
@@ -459,6 +459,7 @@ export function STIPCalculator() {
       <PayoutScaleVisual 
         teamFinancialPayout={teamFinancials.weightedPayout} 
         personalRating={personalRating.score}
+        personalMultiplier={customMultiplier / 100}
         targetBonus={finalResults.targetBonus}
       />
 
