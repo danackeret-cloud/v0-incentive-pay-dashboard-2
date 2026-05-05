@@ -494,7 +494,7 @@ export function STIPCalculator() {
       />
 
       {/* Bottom padding for sticky bar */}
-      <div className="h-32" />
+      <div className="h-20" />
 
       {/* Sticky Results Bar */}
       <StickyResultsBar

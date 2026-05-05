@@ -50,7 +50,7 @@ export default function STIPCalculatorPage() {
         <STIPCalculator />
 
         {/* Footer */}
-        <footer className="mt-12 border-t pt-6 text-center text-sm text-muted-foreground">
+        <footer className="mt-6 border-t pt-4 text-center text-sm text-muted-foreground">
           <p className="text-balance">
             This calculator provides estimates for educational purposes only.
             Final bonus amounts are subject to management approval and actual financial results.
