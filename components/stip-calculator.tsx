@@ -300,7 +300,7 @@ export function STIPCalculator() {
           <CardHeader>
             <CardTitle>Individual Performance Rating</CardTitle>
             <CardDescription>
-              Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities and Individual/Team Goals. Higher performers receive a larger % of salary; lower performers receive less.
+              Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities, Team Goals, and Individual Goals.
             </CardDescription>
   <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 p-3">
   <p className="text-xs text-amber-700 dark:text-amber-400">
@@ -333,8 +333,6 @@ export function STIPCalculator() {
 
               {/* Interactive rating sliders */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-4 text-sm text-muted-foreground">Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities, Team Goals, and Individual Goals.</p>
-                
                 <div className="space-y-4">
                   {ratingScale.map((rating) => {
                     const maxValue = rating.multiplierMax * 100
