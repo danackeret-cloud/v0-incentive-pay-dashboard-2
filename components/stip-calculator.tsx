@@ -333,7 +333,7 @@ export function STIPCalculator() {
 
               {/* Interactive rating sliders */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-4 text-sm text-muted-foreground">Managers divide the Team Bonus Pool among their team based on individual performance against AV Strategic Initiatives, Team Goals, and Individual Goals.</p>
+                <p className="mb-4 text-sm text-muted-foreground">Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities, Team Goals, and Individual Goals.</p>
                 
                 <div className="space-y-4">
                   {ratingScale.map((rating) => {
