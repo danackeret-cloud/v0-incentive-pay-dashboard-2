@@ -298,7 +298,7 @@ export function STIPCalculator() {
         {/* Personal Rating */}
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle>Personal Performance Rating</CardTitle>
+            <CardTitle>Individual Performance Rating</CardTitle>
             <CardDescription>
               Managers divide a fixed bonus pool among their team based on individual performance against AV Priorities and Individual/Team Goals. Higher performers receive a larger % of salary; lower performers receive less.
             </CardDescription>
@@ -319,26 +319,23 @@ export function STIPCalculator() {
                       setPersonalRating(rating)
                       setCustomMultiplier(rating.multiplier * 100)
                     }}
-                    className={`rounded-lg border-2 p-4 text-center transition-all flex flex-col items-center justify-between min-h-[100px] ${
+                    className={`rounded-lg border-2 p-3 text-center transition-all flex flex-col items-center justify-center gap-1 min-h-[80px] ${
                       personalRating.score === rating.score
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border hover:border-primary/50"
                     }`}
                   >
                     <span className="text-2xl font-bold">{rating.score}</span>
-                    <span className="text-[9px] leading-tight text-center break-words hyphens-auto flex-1 flex items-center">{rating.label}</span>
-                    <span className="text-[10px] font-medium opacity-80">
-                      {rating.multiplier === 0 ? "0%" : `~${(rating.multiplier * 100).toFixed(0)}%`}
-                    </span>
+                    <span className="text-[9px] leading-tight text-center break-words hyphens-auto">{rating.label}</span>
                   </button>
                 ))}
               </div>
 
               {/* Interactive rating sliders */}
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="mb-4 text-sm font-medium">Adjust Payout Within Rating Range</p>
+                <p className="mb-4 text-sm font-medium">Individual Performance Rating</p>
                 
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {ratingScale.map((rating) => {
                     const maxValue = rating.multiplierMax * 100
                     const minValue = rating.multiplierMin * 100
@@ -347,13 +344,18 @@ export function STIPCalculator() {
                     
                     // Color configurations with hex values for gradients
                     const colorConfig = {
-                      1: { bg: 'bg-red-500', text: 'text-red-600 dark:text-red-400', hex: '#ef4444' },
-                      2: { bg: 'bg-orange-500', text: 'text-orange-600 dark:text-orange-400', hex: '#f97316' },
-                      3: { bg: 'bg-yellow-500', text: 'text-yellow-600 dark:text-yellow-400', hex: '#eab308' },
-                      4: { bg: 'bg-green-500', text: 'text-green-600 dark:text-green-400', hex: '#22c55e' },
-                      5: { bg: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', hex: '#3b82f6' },
+                      1: { text: 'text-red-600 dark:text-red-400', hex: '#ef4444' },
+                      2: { text: 'text-orange-600 dark:text-orange-400', hex: '#f97316' },
+                      3: { text: 'text-yellow-600 dark:text-yellow-400', hex: '#eab308' },
+                      4: { text: 'text-green-600 dark:text-green-400', hex: '#22c55e' },
+                      5: { text: 'text-blue-600 dark:text-blue-400', hex: '#3b82f6' },
                     }
                     const color = colorConfig[rating.score as keyof typeof colorConfig]
+                    
+                    // Calculate gradient stops for clearer feathering effect
+                    const minStop = (minValue / 150) * 100
+                    const maxStop = (maxValue / 150) * 100
+                    const midStop = (minStop + maxStop) / 2
                     
                     return (
                       <div 
@@ -361,7 +363,7 @@ export function STIPCalculator() {
                         className={`transition-all cursor-pointer rounded-lg p-3 -mx-3 ${
                           isSelected 
                             ? 'bg-primary/10 ring-2 ring-primary/30' 
-                            : 'opacity-50 hover:opacity-75 hover:bg-muted'
+                            : 'opacity-40 hover:opacity-70 hover:bg-muted'
                         }`}
                         onClick={() => {
                           if (!isSelected) {
@@ -383,45 +385,27 @@ export function STIPCalculator() {
                         
                         {/* Slider with gradient track */}
                         <div className="relative">
-                          {/* Custom gradient track background */}
+                          {/* Custom gradient track background - feathers from center of range outward */}
                           <div 
-                            className="absolute inset-x-0 h-2 rounded-full pointer-events-none"
+                            className="absolute inset-x-0 h-3 rounded-full pointer-events-none"
                             style={{ 
                               top: '50%',
                               transform: 'translateY(-50%)',
                               background: rating.score === 1 
-                                ? `linear-gradient(to right, ${color.hex} 0%, ${color.hex}00 10%)`
+                                ? `linear-gradient(to right, ${color.hex}cc 0%, ${color.hex}40 5%, ${color.hex}08 15%, transparent 30%)`
                                 : `linear-gradient(to right, 
-                                    ${color.hex}10 0%, 
-                                    ${color.hex}30 ${(minValue / 150) * 100}%, 
-                                    ${color.hex} ${((minValue + maxValue) / 2 / 150) * 100}%, 
-                                    ${color.hex}30 ${(maxValue / 150) * 100}%, 
-                                    ${color.hex}10 100%
+                                    transparent 0%,
+                                    ${color.hex}08 ${Math.max(0, minStop - 20)}%,
+                                    ${color.hex}25 ${Math.max(0, minStop - 8)}%,
+                                    ${color.hex}60 ${minStop}%,
+                                    ${color.hex}cc ${midStop}%,
+                                    ${color.hex}60 ${maxStop}%,
+                                    ${color.hex}25 ${Math.min(100, maxStop + 8)}%,
+                                    ${color.hex}08 ${Math.min(100, maxStop + 20)}%,
+                                    transparent 100%
                                   )`
                             }}
                           />
-                          
-                          {/* Range indicator markers */}
-                          {maxValue > 0 && (
-                            <>
-                              {/* Min marker */}
-                              <div 
-                                className="absolute top-1/2 w-0.5 h-4 -translate-y-1/2 rounded-full opacity-60"
-                                style={{ 
-                                  left: `${(minValue / 150) * 100}%`,
-                                  backgroundColor: color.hex
-                                }}
-                              />
-                              {/* Max marker */}
-                              <div 
-                                className="absolute top-1/2 w-0.5 h-4 -translate-y-1/2 rounded-full opacity-60"
-                                style={{ 
-                                  left: `${(maxValue / 150) * 100}%`,
-                                  backgroundColor: color.hex
-                                }}
-                              />
-                            </>
-                          )}
                           
                           <Slider
                             value={[currentValue]}
@@ -441,12 +425,9 @@ export function STIPCalculator() {
                           />
                         </div>
                         
-                        {/* Range hint */}
+                        {/* Scale markers */}
                         <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
                           <span>0%</span>
-                          <span className={`${color.text} font-medium`}>
-                            {maxValue === 0 ? 'Fixed at 0%' : `Typical: ${minValue.toFixed(0)}% - ${maxValue.toFixed(0)}%`}
-                          </span>
                           <span>150%</span>
                         </div>
                       </div>
@@ -459,9 +440,9 @@ export function STIPCalculator() {
               <div className="mt-auto rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Personal Performance Multiplier</p>
+                    <p className="font-medium">Individual Performance Multiplier</p>
                     <p className="text-xs text-muted-foreground">
-                      {personalRating.label} (typical range: {personalRating.multiplier > 0 ? `${(personalRating.multiplierMin * 100).toFixed(0)}%-${(personalRating.multiplierMax * 100).toFixed(0)}%` : "0%"})
+                      Rating {personalRating.score}: {personalRating.label}
                     </p>
                   </div>
                   <span className="text-2xl font-bold text-primary">
